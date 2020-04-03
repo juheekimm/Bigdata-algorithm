@@ -16,3 +16,7 @@ class Store(models.Model):
     @property
     def category_list(self):
         return self.category.split("|") if self.category else []
+
+class Menu(models.Model):
+    id = models.IntegerField(primary_key=True)
+    store = models.IntegerField()

@@ -13,7 +13,7 @@ Front -->> 사용자 : 6.검색 결과 반환
 
 > git의 md 엔진에 mermaid 라이브러리가 반영되어 있지 않아서 sequence diagram이 보이지 않는 관계로 캡쳐 이미지를 별도로 첨부합니다.
 
-<img src="/img/sequence_diagram.png">
+<img src="img/sequence_diagram.png">
 
 
 
