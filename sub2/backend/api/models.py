@@ -19,4 +19,20 @@ class Store(models.Model):
 
 class Menu(models.Model):
     id = models.IntegerField(primary_key=True)
-    store = models.IntegerField()
+    store = models.Foreignkey(Store)
+    menu_name = models.CharField(max_length=50)
+    price = models.IntegerField(default=0)
+
+class User(models.Model):
+    id = models.IntegerField(primary_key=True)
+    gender = models.CharField(max_length=10)
+    age = models.IntegerField(default=0)
+
+class Review(models.Model):
+    id = models.IntegerField(primary_key=True)
+    store = models.Foreignkey(Store)
+    user = models.Foreignkey(User)
+    total_score = models.IntegerField(default=0)
+    content = models.CharField(max_length=50)
+    reg_time = models.DateTimeField(auto_now=True)
+
