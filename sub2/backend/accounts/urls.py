@@ -1,10 +1,13 @@
 from django.contrib import admin
 # from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from . import views
+from rest_framework.authtoken import views
+# from . import views
 
 # fmt: off
 urlpatterns = [
+    path('posts/', views.posts, name='posts'),
+    # path('api-token-auth/', views.obtain_auth_token)
     # path("signup/", views.signup, name="signup"),
     # path("login/", views.login, name="login"),
     # path("logout/", views.logout, name="logout"),
