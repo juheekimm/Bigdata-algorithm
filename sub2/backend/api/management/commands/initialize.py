@@ -44,6 +44,59 @@ class Command(BaseCommand):
         ]
         models.Store.objects.bulk_create(stores_bulk)
 
+        # menus info
+        print("[*] Initializing menus...")
+        models.Menu.objects.all().delete()
+
+        menus = dataframes["menus"]
+        menus_bulk = [
+            models.Menu(
+                id = menu.id,
+                store = menu.store,
+                menu_name = menu.menu_name,
+                price = menu.price
+
+            )
+            for menu in menus.itertuples()
+        ]
+        models.Menu.objects.bulk_create(menus_bulk)
+
+        # users info
+        print("[*] Initializing users...")
+        models.User.objects.all().delete()
+
+        users = dataframes["users"]
+        users_bulk = [
+            models.Menu(
+                id = user.id,
+                gender = user.gender,
+                age = user.age
+            )
+            for user in users.itertuples()
+        ]
+        models.User.objects.bulk_create(users_bulk)
+
+        # reviews info
+        print("[*] Initializing reviews...")
+        models.Review.objects.all().delete()
+
+        reviews = dataframes["reviews"]
+        reviews_bulk = [
+            models.Review(
+                id = review.id,
+                store = review.store,
+                user = review.user,
+                total_score = review.total_score,
+                content = review.content,
+                reg_time = review.reg_time
+
+
+            )
+            for review in reviews.itertuples()
+        ]
+        models.Review.objects.bulk_create(reviews_bulk)
+
+
         print("[+] Done")
 
     def handle(self, *args, **kwargs):
