@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # "account",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "api",
-    "account.apps.AccountConfig",
+    "accounts.apps.AccountsConfig",
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+# 세션 타임아웃 : 30분으로 설정
+SESSION_COOKIE_AGE = 1800
+
+# 사용자의 request가 있는 경우 세션 시간을 연장하고 없는 경우에만 타임아웃 설정
+SESSION_SAVE_EVERY_REQUEST = True
+
+# 이전 페이지로 돌아가기
+# LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/profile'
+LOGOUT_REDIRECT_URL = '/login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
