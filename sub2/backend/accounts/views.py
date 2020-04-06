@@ -2,30 +2,31 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 
-# 토큰추가
-from django.core import serializers
-from django.http import HttpResponse
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .models import Post
 # from rest_framework.authtoken.models import Token
 
 # for user in User.objects.all():
 #     Token.objects.get_or_create(user=user)
 
+# 토큰추가
+# from django.core import serializers
+# from django.http import HttpResponse
+# from rest_framework.decorators import api_view, permission_classes, authentication_classes
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+# from .models import Post
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
-@authentication_classes((JSONWebTokenAuthentication,))
-def posts(request):
-    posts = Post.objects.filter(
-        published_at__isnull=False).order_by('-published_at')
-    post_list = serializers.serialize('json', posts)
-    return HttpResponse(post_list, content_type="text/json-comment-filtered")
-
-
+# @api_view(['GET'])
+# @permission_classes((IsAuthenticated, ))
+# @authentication_classes((JSONWebTokenAuthentication,))
+# def posts(request):
+#     posts = Post.objects.filter(
+#         published_at__isnull=False).order_by('-published_at')
+#     post_list = serializers.serialize('json', posts)
+#     return HttpResponse(post_list, content_type="text/json-comment-filtered")
 
 def signup(request):
     if request.method == "POST":
@@ -72,11 +73,23 @@ def save_session(request, username, password):
     request.session['username'] = username
     request.session['password'] = password
 
-def profile(request):
-    if not request.user.is_authenticated:
-        data = {'username': request.user, 'is_authenticated': request.user.is_authenticated}
-    else:
-        data = {'last_login': request.user.last_login, 'username': request.user.username,
-                'password': request.user.password, 'is_authenticated': request.user.is_authenticated}
-    return render(request, 'profile.html', context={'data': data})
+# def profile(request):
+#     if not request.user.is_authenticated:
+#         data = {'username': request.user, 'is_authenticated': request.user.is_authenticated}
+#     else:
+#         data = {'last_login': request.user.last_login, 'username': request.user.username,
+#                 'password': request.user.password, 'is_authenticated': request.user.is_authenticated}
+#     return render(request, 'profile.html', context={'data': data})
 # Create your views here.
+
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        context = {'parm1': 'hello', 'parm2': 'django', 'auth': request.user.is_authenticated}
+        print(request.user)
+        return render(request, 'index.html', context=context)
+
+@login_required
+def profile(request):
+    data = {'last_login': request.user.last_login, 'username': request.user.username,
+            'password': request.user.password, 'is_authenticated': request.user.is_authenticated}
+    return render(request, 'profile.html', context={'data': data})

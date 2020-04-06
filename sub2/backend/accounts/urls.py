@@ -6,7 +6,7 @@ from rest_framework.authtoken import views
 
 # fmt: off
 urlpatterns = [
-    path('posts/', views.posts, name='posts'),
+    # path('posts/', views.posts, name='posts'),
     # path('api-token-auth/', views.obtain_auth_token)
     # path("signup/", views.signup, name="signup"),
     # path("login/", views.login, name="login"),
