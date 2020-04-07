@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "api",
     "accounts.apps.AccountsConfig",
+    "rest_framework_swagger",
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,7 @@ LOGIN_URL = '/login'
 STATIC_URL = "/static/"
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),

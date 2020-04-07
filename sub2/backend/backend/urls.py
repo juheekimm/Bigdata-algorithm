@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from rest_framework_swagger.views import get_swagger_view
 # import accounts
 from accounts.views import signup, profile, IndexView
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
@@ -22,6 +23,7 @@ urlpatterns = [
     path('api/token/', obtain_jwt_token),
     path('api/token/verify/', verify_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
+    path('api/doc/', get_swagger_view(title="REST API Document")),
     # path('api/blog/', include('blog.urls'))
     # path('accounts/', include('django.contrib.auth.urls')),
     # path('', accounts.views.base, name="base"), 

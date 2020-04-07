@@ -1,4 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=5, null=True, blank=True)
+    age = models.IntegerField()
+    # nickname = models.TextField(max_length=10)
+
 
 # 토큰추가
 # from django.conf import settings

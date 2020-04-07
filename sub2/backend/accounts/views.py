@@ -4,6 +4,10 @@ from django.views import View
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+
+from .forms import ProfileForm
+from .models import Profile
+
 # from django.contrib.auth.models import User
 # from django.contrib import auth
 from django.http import HttpResponseRedirect
@@ -24,13 +28,20 @@ def profile(request):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
+        user_form = UserCreationForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
             return HttpResponseRedirect(settings.LOGIN_URL)
     else:
-        form = UserCreationForm()
-    return render(request, 'registration/signup_form.html', { 'form' : form })
+        user_form = UserCreationForm()
+        profile_form = ProfileForm()
+    return render(request, 'registration/signup_form.html', { 'form' : user_form, 'profile_form': profile_form })
 
 # def login(request):
 #     if request.method == "POST":
