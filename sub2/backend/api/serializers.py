@@ -17,6 +17,7 @@ class StoreSerializer(serializers.ModelSerializer):
             "category_list",
         ]
 
+
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
@@ -27,6 +28,7 @@ class MenuSerializer(serializers.ModelSerializer):
             "price",  # 메뉴가격
         ]
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -35,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             "gender",  # 성별
             "age",  # 연령
         ]
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:

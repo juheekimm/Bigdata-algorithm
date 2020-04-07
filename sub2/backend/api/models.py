@@ -17,16 +17,25 @@ class Store(models.Model):
     def category_list(self):
         return self.category.split("|") if self.category else []
 
+
 class Menu(models.Model):
     id = models.IntegerField(primary_key=True)
     store = models.ForeignKey(Store,on_delete=models.CASCADE)
     menu_name = models.CharField(max_length=50)
     price = models.IntegerField(default=0)
 
+    def __str__(self):
+        return [self.id, self.store, self.menu_name]
+
+
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     gender = models.CharField(max_length=10)
     age = models.IntegerField(default=0)
+
+    def __str__(self):
+        return [self.id, self.gender, self.age]
+
 
 class Review(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -36,3 +45,5 @@ class Review(models.Model):
     content = models.CharField(max_length=50)
     reg_time = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return [self.id, self.store, self.user, self.total_score]
