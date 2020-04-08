@@ -26,11 +26,10 @@ SECRET_KEY = "$yg2c-8-8cszt%3k$b=3wwc^j1g%gn)wj%yldz)6jd(ez80u-s"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# '*'을 넣으면 develop 용으로 모두 허용해준다는데 좀더 봐야할듯.(배포할 땐 허용 가능 호스트를 설정해준다.)
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
