@@ -89,6 +89,8 @@ DATABASES = {
         'PORT': '3306',
         'OPTIONS': {
             'init_command': 'set GLOBAL max_allowed_packet = 1073741824'
+
+
         }
 
     }

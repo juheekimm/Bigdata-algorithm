@@ -23,26 +23,27 @@ class Command(BaseCommand):
         Sub PJT 1에서 만든 Dataframe을 이용하여 DB를 초기화합니다.
         """
         print("[*] Loading data...")
+
         dataframes = self._load_dataframes()
 
         print("[*] Initializing stores...")
-        # models.Store.objects.all().delete()
-        # stores = dataframes["stores"]
-        # stores_bulk = [
-        #     models.Store(
-        #         id=store.id,
-        #         store_name=store.store_name,
-        #         branch=store.branch,
-        #         area=store.area,
-        #         tel=store.tel,
-        #         address=store.address,
-        #         latitude=store.latitude,
-        #         longitude=store.longitude,
-        #         category=store.category,
-        #     )
-        #     for store in stores.itertuples()
-        # ]
-        # models.Store.objects.bulk_create(stores_bulk)
+        models.Store.objects.all().delete()
+        stores = dataframes["stores"]
+        stores_bulk = [
+            models.Store(
+                id=store.id,
+                store_name=store.store_name,
+                branch=store.branch,
+                area=store.area,
+                tel=store.tel,
+                address=store.address,
+                latitude=store.latitude,
+                longitude=store.longitude,
+                category=store.category,
+            )
+            for store in stores.itertuples()
+        ]
+        models.Store.objects.bulk_create(stores_bulk)
 
         # menus info
         print("[*] Initializing menus...")
@@ -85,7 +86,7 @@ class Command(BaseCommand):
             models.Review(
                 id=review.id,
                 store_id=review.store,
-                user=review.user,
+                user_id=review.user,
                 total_score=review.score,
                 content=review.content,
                 reg_time=review.reg_time

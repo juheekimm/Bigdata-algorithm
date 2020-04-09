@@ -21,7 +21,7 @@ class Store(models.Model):
 class Menu(models.Model):
     id = models.IntegerField(primary_key=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    menu_name = models.CharField(max_length=200, null=True)
+    menu_name = models.TextField(null=True)
     price = models.FloatField(null=True)
 
     def __str__(self):
@@ -42,7 +42,7 @@ class Review(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_score = models.IntegerField(default=0)
-    content = models.CharField(max_length=50)
+    content = models.TextField(null=True)
     reg_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
