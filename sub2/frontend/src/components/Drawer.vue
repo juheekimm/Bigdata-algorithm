@@ -6,9 +6,14 @@
     dark
     floating
     persistent
-    mobile-break-point="900"
+    mobile-break-point="1800"
     width="250"
   >
+    <v-layout column justify-center>
+      <v-img class="ma-5" src="../assets/cloud.jpg">
+      </v-img>
+    </v-layout>
+    <v-divider class="mx-4" />
     <v-layout column>
       <v-list rounded>
         <v-list-item
@@ -49,6 +54,9 @@ export default {
         to: "/search",
         icon: "mdi-card-search",
         text: "맛집 검색"
+      },
+      {
+
       }
     ]
   }),
