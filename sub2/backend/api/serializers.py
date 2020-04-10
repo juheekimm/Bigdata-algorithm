@@ -50,3 +50,10 @@ class ReviewSerializer(serializers.ModelSerializer):
             "content",  # 리뷰 내용
             "reg_time",  # 리뷰 등록 시간
         ]
+
+class StoreNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Store
+        fields = [
+            "store_name",
+        ]
