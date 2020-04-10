@@ -37,3 +37,15 @@
 
 - 개발자 정보를 보여주는 페이지
 - 회원정보를 볼 수 있는 페이지
+
+
+## 역할
+- 김주희 : 로그인/회원가입, knn 알고리즘, jira 담당
+- 이재혁 : db설계 및 Matrix Factorization 알고리즘, 팀장
+- 김태민 : rest 설계 및 front 담당, git 담당
+
+## 사용 기술
+- back : django, python 라이브러리
+- front : vue
+- db : mysql
+- 형상관리 : git, jira
