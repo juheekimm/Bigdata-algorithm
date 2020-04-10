@@ -57,4 +57,5 @@ typed-ast==1.4.1
 urllib3==1.25.7
 Werkzeug==1.0.0
 wrapt==1.11.2
-
+pandas==0.25.3
+django-cors-headers==3.2.1
