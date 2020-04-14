@@ -1,12 +1,13 @@
 <template>
   <v-container>
     <v-layout justify-center wrap mt-5>
-      <v-flex md8 xs8>
+      <v-flex md10 xs12>
         <autocomplete
           :search="search"
           placeholder="음식점을 찾아보세요"
           aria-label="Search for a country"
           @submit="onSubmit"
+          style="z-index: 10;"
         >
           <template
             #default="{
@@ -45,8 +46,7 @@
                 v-bind="resultListProps"
                 v-on="resultListListeners"
                 class="pa-0"
-                style="
-    background: #ffffff;"
+                style="background: #ffffff; z-index: 10;"
               >
                 <v-hover
                   v-slot:default="{ hover }"
@@ -63,6 +63,7 @@
                         : 'white'
                     "
                     class="px-3"
+                    style="z-index: 10;"
                   >
                     <v-row>
                       <v-col class="">
@@ -118,7 +119,7 @@
             :key="index"
           >
             <v-hover v-slot:default="{ hover }">
-              <v-card color="grey lighten-4" class="ma-5">
+              <v-card color="grey lighten-4" class="ma-5" :to="'/storeDetail?storeId='+result.id">
                 <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
                   <v-expand-transition>
                     <div
@@ -146,6 +147,7 @@
                     right
                     top
                     @click="doMouseEnterStore(result)"
+                    style = "z-index:0"
                   >
                     <v-icon>mdi-map-outline</v-icon>
                   </v-btn>
@@ -176,11 +178,7 @@
       </v-flex>
       <v-flex md3 class="d-none d-md-block">
         <v-col>
-          <div id="map" style="width:100% ;height:400px;"></div>
-          <div>
-           <div> 상점 이름 </div>
-          </div>
-
+          <div id="map" style="width:100% ;height:400px; z-index:0"></div>
         </v-col>
       </v-flex>
     </v-layout>
@@ -240,7 +238,7 @@ export default {
         }
 
         http
-          .post('/api/review/SearchStoreforComplete', form)
+          .post('/api/SearchStoreforComplete', form)
           .then(response => {
             // console.log(response.data)
             var list = []
@@ -273,7 +271,7 @@ export default {
       form.append('count', 10)
 
       http
-        .post('api/review/searchStore', form)
+        .post('api/searchStore', form)
         .then(response => {
           // console.log(response.data)
           if (response.status == 200) {
@@ -306,10 +304,8 @@ export default {
       // 마커를 지도에 표시합니다.
       marker.setMap(map)
       // 마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
-      
-      var iwContent = '<div>' +
-      store.store_name+
-    '</div>';
+
+      var iwContent = '<div>' + store.store_name + '</div>'
       // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
       // 인포윈도우를 생성합니다
       var infowindow = new kakao.maps.InfoWindow({
@@ -385,5 +381,4 @@ input {
   position: absolute;
   width: 100%;
 }
-
 </style>
