@@ -80,9 +80,8 @@
         </autocomplete>
       </v-flex>
     </v-layout>
-    <v-layout justify-center wrap mt-5>
-      <v-flex md8 xs12
-        >s
+    <v-layout wrap mt-5>
+      <v-flex md8 xs12>
         <v-layout justify-end md12>
           <v-btn text @click.stop="filterDialog = true">filter</v-btn>
           <v-dialog v-model="filterDialog" max-width="300">
@@ -110,14 +109,73 @@
             </v-card>
           </v-dialog>
         </v-layout>
-        <v-layout justify-center>
-          <v-card> </v-card>
-          put list
+        <v-layout wrap>
+          <v-flex
+            lg4
+            md6
+            xs12
+            v-for="(result, index) in storeList"
+            :key="index"
+          >
+            <v-hover v-slot:default="{ hover }">
+              <v-card color="grey lighten-4" class="ma-5" @mouseenter="doMouseEnterStore(result)">
+                <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
+                  <v-expand-transition>
+                    <div
+                      v-if="hover"
+                      class="d-flex transition-fast-in-fast-out cyan lighten-1 v-card--reveal black--text "
+                      style="height: 100%; word-break:break-all"
+                    >
+                      <b
+                        v-for="(category, index) in result.category_list"
+                        :key="index"
+                        class="title"
+                      >
+                        #{{ category }}
+                      </b>
+                    </div>
+                  </v-expand-transition>
+                </v-img>
+                <v-card-text class="pt-6" style="position: relative;">
+                  <v-btn
+                    absolute
+                    color="pink"
+                    class="white--text"
+                    fab
+                    large
+                    right
+                    top
+                  >
+                    <v-icon>mdi-heart</v-icon>
+                  </v-btn>
+                  <div class="title font-weight-light orange--text">
+                    {{ result.store_name }}
+                  </div>
+                  <div
+                    class="font-weight-light grey--text caption"
+                    style="text-align: left;"
+                  >
+                    #{{ result.area }}
+                    <b
+                      v-for="(category, index) in result.category_list"
+                      :key="index"
+                      class="font-weight-light grey--text caption"
+                    >
+                      #{{ category }}
+                    </b>
+                  </div>
+                  <div class="font-weight-light body-2 mb-2">
+                    {{ result.address }}
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-hover>
+          </v-flex>
         </v-layout>
       </v-flex>
       <v-flex md4 class="d-none d-md-block">
         <v-col>
-          map
+          <div id="map" style="width:500px;height:400px;"></div>
         </v-col>
       </v-flex>
     </v-layout>
@@ -138,14 +196,14 @@ export default {
     Autocomplete,
     CustomInput
   },
-
   data: () => ({
     focused: false,
     value: '',
     results: [],
     keyword: '',
     filterDialog: false,
-    orderStandard: 'name'
+    orderStandard: 'name',
+    storeList: []
   }),
   computed: {
     noResults() {
@@ -173,7 +231,7 @@ export default {
         }
 
         http
-          .post('/api/review/SearchStoreforComplete/', form)
+          .post('/api/review/SearchStoreforComplete', form)
           .then(response => {
             // console.log(response.data)
             var list = []
@@ -194,11 +252,34 @@ export default {
       console.log('handleChange' + ' ' + input.target.value)
     },
     onSubmit(result) {
-      // if(result != undefined && result.length > this.keyword.length){
-      //   alert(result)
-      // }else{
-      //   alert(this.keyword)
-      // }
+      var keyword
+      if (result != undefined && result.length > this.keyword.length) {
+        keyword = result
+      } else {
+        keyword = this.keyword
+      }
+      let form = new FormData()
+      form.append('condition', 'storeName')
+      form.append('keyword', keyword)
+      form.append('count', 10)
+
+      http
+        .post('api/review/searchStore', form)
+        .then(response => {
+          // console.log(response.data)
+          if (response.status == 200) {
+            console.log(response.data)
+            this.storeList = response.data
+          } else {
+            this.storeList = []
+          }
+        })
+        .catch(err => {
+          resolve([])
+        })
+    },
+    doMouseEnterStore(store){
+      console.log(store)
     }
   }
 }
@@ -228,5 +309,14 @@ input {
 
 .v-card {
   margin: 0px;
+}
+
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: 0.7;
+  position: absolute;
+  width: 100%;
 }
 </style>
