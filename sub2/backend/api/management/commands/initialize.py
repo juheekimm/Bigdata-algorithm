@@ -26,6 +26,25 @@ class Command(BaseCommand):
 
         dataframes = self._load_dataframes()
 
+        print("[*] Initializing stores...")
+        models.Store.objects.all().delete()
+        stores = dataframes["stores"]
+        stores_bulk = [
+            models.Store(
+                id=store.id,
+                store_name=store.store_name,
+                branch=store.branch,
+                area=store.area,
+                tel=store.tel,
+                address=store.address,
+                latitude=store.latitude,
+                longitude=store.longitude,
+                category=store.category,
+            )
+            for store in stores.itertuples()
+        ]
+        models.Store.objects.bulk_create(stores_bulk)
+
 
         # menus info
         print("[*] Initializing menus...")
