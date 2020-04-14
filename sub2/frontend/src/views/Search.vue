@@ -81,7 +81,7 @@
       </v-flex>
     </v-layout>
     <v-layout wrap mt-5>
-      <v-flex md8 xs12>
+      <v-flex md9 xs12>
         <v-layout justify-end md12>
           <v-btn text @click.stop="filterDialog = true">filter</v-btn>
           <v-dialog v-model="filterDialog" max-width="300">
@@ -118,7 +118,7 @@
             :key="index"
           >
             <v-hover v-slot:default="{ hover }">
-              <v-card color="grey lighten-4" class="ma-5" @mouseenter="doMouseEnterStore(result)">
+              <v-card color="grey lighten-4" class="ma-5">
                 <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
                   <v-expand-transition>
                     <div
@@ -145,8 +145,9 @@
                     large
                     right
                     top
+                    @click="doMouseEnterStore(result)"
                   >
-                    <v-icon>mdi-heart</v-icon>
+                    <v-icon>mdi-map-outline</v-icon>
                   </v-btn>
                   <div class="title font-weight-light orange--text">
                     {{ result.store_name }}
@@ -173,9 +174,13 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex md4 class="d-none d-md-block">
+      <v-flex md3 class="d-none d-md-block">
         <v-col>
-          <div id="map" style="width:500px;height:400px;"></div>
+          <div id="map" style="width:100% ;height:400px;"></div>
+          <div>
+           <div> 상점 이름 </div>
+          </div>
+
         </v-col>
       </v-flex>
     </v-layout>
@@ -205,6 +210,9 @@ export default {
     orderStandard: 'name',
     storeList: []
   }),
+  mounted() {
+    window.kakao && window.kakao.maps ? this.initMap() : this.addScript()
+  },
   computed: {
     noResults() {
       return this.value && this.results.length === 0
@@ -225,6 +233,7 @@ export default {
       let form = new FormData()
       form.append('keyword', input)
       this.keyword = input
+      console.log('search')
       return new Promise(resolve => {
         if (input.length < 2) {
           return resolve([])
@@ -278,8 +287,65 @@ export default {
           resolve([])
         })
     },
-    doMouseEnterStore(store){
-      console.log(store)
+    doMouseEnterStore(store) {
+      console.log('doMouseEnterStore : ' + store)
+      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+          center: new kakao.maps.LatLng(store.latitude, store.longitude), // 지도의 중심좌표
+          level: 3 // 지도의 확대 레벨
+        }
+
+      var map = new kakao.maps.Map(mapContainer, mapOption) // 지도를 생성합니다
+
+      // 마커를 표시할 위치입니다
+      var position = new kakao.maps.LatLng(store.latitude, store.longitude)
+      // 마커를 생성합니다
+      var marker = new kakao.maps.Marker({
+        position: position
+      })
+      // 마커를 지도에 표시합니다.
+      marker.setMap(map)
+      // 마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
+      
+      var iwContent = '<div>' +
+      store.store_name+
+    '</div>';
+      // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      // 인포윈도우를 생성합니다
+      var infowindow = new kakao.maps.InfoWindow({
+        content: iwContent
+      })
+      // 마커에 마우스오버 이벤트를 등록합니다
+      kakao.maps.event.addListener(marker, 'mouseover', function() {
+        // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+        infowindow.open(map, marker)
+      })
+      // 마커에 마우스아웃 이벤트를 등록합니다
+      kakao.maps.event.addListener(marker, 'mouseout', function() {
+        // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+        infowindow.close()
+      })
+      var zoomControl = new kakao.maps.ZoomControl()
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
+    },
+    initMap() {
+      var container = document.getElementById('map')
+      var options = {
+        center: new kakao.maps.LatLng(36.622423, 127.97399),
+        level: 13
+      }
+      var map = new kakao.maps.Map(container, options) //마커추가하려면 객체를 아래와 같이 하나 만든다.
+      // var marker = new kakao.maps.Marker({ position: map.getCenter() });
+      var zoomControl = new kakao.maps.ZoomControl()
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
+      // marker.setMap(map);
+    },
+    addScript() {
+      const script = document.createElement('script') /* global kakao */
+      script.onload = () => kakao.maps.load(this.initMap)
+      script.src =
+        'http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=053dd3145f395e73cbb5211bedf3e97f'
+      document.head.appendChild(script)
     }
   }
 }
@@ -319,4 +385,5 @@ input {
   position: absolute;
   width: 100%;
 }
+
 </style>
