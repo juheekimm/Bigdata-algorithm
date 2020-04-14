@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
+from rest_framework import status
 
 
 class SmallPagination(PageNumberPagination):
@@ -31,7 +32,6 @@ class AllStoreList(APIView):
         queryset = Store.objects.all()[:10]
         serializer = StoreSerializer(queryset, many=True)
         return Response(serializer.data)
-
 
 class SearchStore(APIView):
 
@@ -75,7 +75,37 @@ class SearchStroeforComplete(APIView):
         serializer = StoreNameSerializer(queryset, many=True)
         return Response(serializer.data)
 
+class SearchReviewbyStoreId(APIView):
 
+    def post(self, request):
+        if 'storeId' in request.POST.keys():
+            storeId = request.POST['storeId']
+
+            queryset = Review.objects.all().filter(store_id=storeId).order_by("reg_time")
+            serializer = ReviewSerializer(queryset, many = True)
+            return Response(serializer.data)
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+
+class SearchMenu(APIView):
+    def post(self, request):
+        ## session의 값과 userId값이 같으지 확인해야함^^^^^^^^
+        if ('user' in request.POST.keys()) and ('store' in request.POST.keys()) and ('content' in request.POST.keys()):
+            user = request.POST['user']
+            store = request.POST['store']
+            content = request.POST['content']
+            
+            store = Store.objects.get(store=store)
+
+            data = Review(user=user,content=content)
+            data.store = store
+            data.save()
+            stat=status.HTTP_200_OK
+        else :
+            stat=status.HTTP_400_BAD_REQUEST
+            
+        return Response({'status': stat})
 
 #CRUD 
 class reviewCRUD(APIView):
