@@ -46,7 +46,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             "id",  # 메뉴 고유번호
             "store",  # 음식점 고유번호
             "user",  # 유저 고유번호
-            "score",  # 평점
+            "total_score",  # 평점
             "content",  # 리뷰 내용
             "reg_time",  # 리뷰 등록 시간
         ]
