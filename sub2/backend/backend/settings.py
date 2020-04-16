@@ -126,7 +126,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # 세션 타임아웃 : 30분으로 설정
 SESSION_COOKIE_AGE = 1800
