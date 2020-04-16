@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "api",
     "accounts.apps.AccountsConfig",
+    "recommend.apps.RecommendConfig",
     "rest_framework_swagger",
     "corsheaders", #CORS
 ]
@@ -101,6 +102,7 @@ DATABASES = {
         }
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
