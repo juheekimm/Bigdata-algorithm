@@ -10,14 +10,51 @@
 </template>
 
 <script>
+import http from '../http-common'
+import axios from 'axios';
+
 export default {
   created(){
-      console.log("created하이")
+
+    this.isLoading = true
+
+    let form = new FormData()
+    form.append('storeId',this.$route.query.storeId)
+
+    const requestStore = http.post("/api/SearchStorebyStoreId",form)
+    const requestMenu = http.post("/api/SearchMenubyStoreId",form)
+    const requestReview = http.post("api/SearchReviewbyStoreId",form)
+
+    axios.all([requestStore, requestMenu, requestReview])
+      .then(axios.spread((...responses) => {
+        const responseStore = responses[0]
+        const responseMenu = responses[1]
+        const responesReview = responses[2]
+
+        this.store = responseStore.data[0]
+        this.menus = responseMenu.data
+        this.reviews = responesReview.data
+
+        this.isLoading = false
+   
+      }))
+      .catch(errors => {
+
+      })
+  },
+  mounted(){
+
   },
   methods : {
     test() {
       console.log(this.$route.query.storeId)
     }
-  }
+  },
+  data: () => ({
+    store: {},
+    menus: [],
+    reviews: [],
+    isLoading : true,
+  }),
 };
 </script>

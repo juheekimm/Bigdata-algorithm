@@ -186,8 +186,6 @@
 </template>
 
 <script>
-import Card from '@/components/Card'
-import StoreListCard from '@/components/StoreListCard'
 import Autocomplete from '@trevoreyre/autocomplete-vue'
 import { mapState, mapActions } from 'vuex'
 import CustomInput from '@/components/CustomInput'
