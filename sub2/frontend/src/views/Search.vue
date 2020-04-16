@@ -182,6 +182,7 @@
         </v-col>
       </v-flex>
     </v-layout>
+    <infinite-loading v-if="isFirst==false" @infinite="infiniteHandler"></infinite-loading>
   </v-container>
 </template>
 
@@ -190,11 +191,13 @@ import Autocomplete from '@trevoreyre/autocomplete-vue'
 import { mapState, mapActions } from 'vuex'
 import CustomInput from '@/components/CustomInput'
 import http from '../http-common'
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   components: {
     Autocomplete,
-    CustomInput
+    CustomInput,
+    InfiniteLoading
   },
   data: () => ({
     focused: false,
@@ -205,7 +208,11 @@ export default {
     orderStandard: 'name',
     storeList: [],
     map: "",
+    isFirst : true,
   }),
+  created() {
+    this.isFirst = true
+  },
   mounted() {
     window.kakao && window.kakao.maps ? this.initMap() : this.addScript()
   },
@@ -259,10 +266,13 @@ export default {
       } else {
         keyword = this.keyword
       }
+      this.count = 0;
       let form = new FormData()
       form.append('condition', 'storeName')
       form.append('keyword', keyword)
-      form.append('count', 10)
+      form.append('count',this.count)
+      form.append('size',12)
+      
 
       http
         .post('api/searchStore', form)
@@ -271,6 +281,8 @@ export default {
           if (response.status == 200) {
             console.log(response.data)
             this.storeList = response.data
+            this.count += 1
+            this.isFirst = false
           } else {
             this.storeList = []
           }
@@ -327,6 +339,30 @@ export default {
       script.src =
         'http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=053dd3145f395e73cbb5211bedf3e97f'
       document.head.appendChild(script)
+    },
+    infiniteHandler($state){
+      let form = new FormData()
+      form.append('condition', 'storeName')
+      form.append('keyword', this.keyword)
+      form.append('count',this.count)
+      form.append('size',12)
+
+      var tmpList = [];
+      http
+        .post('api/searchStore', form)
+        .then(response => {
+          tmpList = response.data
+          if(tmpList.length > 0) {
+            this.count += 1;
+            this.storeList.push(...tmpList)
+            $state.loaded();
+          }else{
+            $state.complete();
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }
