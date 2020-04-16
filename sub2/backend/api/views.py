@@ -49,11 +49,12 @@ class SearchStore(APIView):
             raise Http404
  
     def post(self, request):
-        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys():
+        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys() and 'size' in request.POST.keys():
             condition = request.POST['condition']
             keyword = request.POST['keyword']
             count = int(request.POST['count'])
-            queryset = self.get_query(condition,keyword)[:count]
+            size = int(request.POST['size'])
+            queryset = self.get_query(condition,keyword)[(count*size):(count*size)+size]
         else :
             queryset = Store.objects.all()[:10]
         serializer = StoreSerializer(queryset, many=True)
