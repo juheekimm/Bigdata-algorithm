@@ -57,3 +57,10 @@ class StoreNameSerializer(serializers.ModelSerializer):
         fields = [
             "store_name",
         ]
+
+class ReviewUserSerializer(serializers.ModelSerializer):
+    user = ReviewSerializer(read_only=True)
+    class Meta:
+        model = Review
+        # fidels = ("reviewId","userId","storeId","contents")
+        fields = '__all__'

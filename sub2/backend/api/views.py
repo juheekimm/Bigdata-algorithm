@@ -75,20 +75,21 @@ class SearchStroeforComplete(APIView):
         serializer = StoreNameSerializer(queryset, many=True)
         return Response(serializer.data)
 
+# 상점Id를 이용해서 리뷰(와 결합된 유저포함)들을 검색합니다.
 class SearchReviewbyStoreId(APIView):
 
     def post(self, request):
         if 'storeId' in request.POST.keys():
             storeId = request.POST['storeId']
 
-            queryset = Review.objects.all().filter(store_id=storeId).order_by("reg_time")
-            serializer = ReviewSerializer(queryset, many = True)
+            queryset = Review.objects.all().filter(store_id=storeId).select_related()
+            serializer = ReviewUserSerializer(queryset, many = True)
             return Response(serializer.data)
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 
-
-class SearchMenu(APIView):
+# 상점Id를 이용해서 메뉴들을 검색합니다.
+class SearchMenubyStoreId(APIView):
     def post(self, request):
         ## session의 값과 userId값이 같으지 확인해야함^^^^^^^^
         if ('user' in request.POST.keys()) and ('store' in request.POST.keys()) and ('content' in request.POST.keys()):
