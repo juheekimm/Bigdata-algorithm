@@ -6,8 +6,8 @@
           :search="search"
           placeholder="음식점을 찾아보세요"
           aria-label="Search for a country"
-          @submit="onSubmit"
           style="z-index: 10;"
+          @submit="onSubmit"
         >
           <template
             #default="{
@@ -119,7 +119,7 @@
             :key="index"
           >
             <v-hover v-slot:default="{ hover }">
-              <v-card color="grey lighten-4" class="ma-5" :to="'/storeDetail?storeId='+result.id">
+              <v-card color="grey lighten-4" class="ma-5" :to="'/storeDetail?storeId='+result.id" @mouseenter="doMouseEnterStore(result)">
                 <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
                   <v-expand-transition>
                     <div
@@ -146,7 +146,7 @@
                     large
                     right
                     top
-                    @click="doMouseEnterStore(result)"
+                    
                     style = "z-index:0"
                   >
                     <v-icon>mdi-map-outline</v-icon>
@@ -190,7 +190,6 @@ import Autocomplete from '@trevoreyre/autocomplete-vue'
 import { mapState, mapActions } from 'vuex'
 import CustomInput from '@/components/CustomInput'
 import http from '../http-common'
-import axios from 'axios'
 
 export default {
   components: {
@@ -204,7 +203,8 @@ export default {
     keyword: '',
     filterDialog: false,
     orderStandard: 'name',
-    storeList: []
+    storeList: [],
+    map: "",
   }),
   mounted() {
     window.kakao && window.kakao.maps ? this.initMap() : this.addScript()
@@ -217,12 +217,10 @@ export default {
 
   methods: {
     handleFocus() {
-      console.log('handleFocus')
       this.focused = true
     },
 
     handleBlur() {
-      console.log('handleBlur')
       this.focused = false
     },
     search(input) {
@@ -250,11 +248,9 @@ export default {
       })
     },
     findSeleted(str) {
-      console.log('findSeleted')
       return 'aria-selected' in str
     },
     handleChange(input) {
-      console.log('handleChange' + ' ' + input.target.value)
     },
     onSubmit(result) {
       var keyword
@@ -284,15 +280,6 @@ export default {
         })
     },
     doMouseEnterStore(store) {
-      console.log('doMouseEnterStore : ' + store)
-      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-        mapOption = {
-          center: new kakao.maps.LatLng(store.latitude, store.longitude), // 지도의 중심좌표
-          level: 3 // 지도의 확대 레벨
-        }
-
-      var map = new kakao.maps.Map(mapContainer, mapOption) // 지도를 생성합니다
-
       // 마커를 표시할 위치입니다
       var position = new kakao.maps.LatLng(store.latitude, store.longitude)
       // 마커를 생성합니다
@@ -300,9 +287,11 @@ export default {
         position: position
       })
       // 마커를 지도에 표시합니다.
-      marker.setMap(map)
-      // 마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
-
+      marker.setMap(this.map)
+      this.map.panTo(position);
+      this.map.setLevel(3);
+      
+      //마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
       var iwContent = '<div>' + store.store_name + '</div>'
       // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
       // 인포윈도우를 생성합니다
@@ -312,15 +301,13 @@ export default {
       // 마커에 마우스오버 이벤트를 등록합니다
       kakao.maps.event.addListener(marker, 'mouseover', function() {
         // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
-        infowindow.open(map, marker)
+        infowindow.open(this.map, marker)
       })
       // 마커에 마우스아웃 이벤트를 등록합니다
       kakao.maps.event.addListener(marker, 'mouseout', function() {
         // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
         infowindow.close()
       })
-      var zoomControl = new kakao.maps.ZoomControl()
-      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
     },
     initMap() {
       var container = document.getElementById('map')
@@ -328,10 +315,10 @@ export default {
         center: new kakao.maps.LatLng(36.622423, 127.97399),
         level: 13
       }
-      var map = new kakao.maps.Map(container, options) //마커추가하려면 객체를 아래와 같이 하나 만든다.
+      this.map = new kakao.maps.Map(container, options) //마커추가하려면 객체를 아래와 같이 하나 만든다.
       // var marker = new kakao.maps.Marker({ position: map.getCenter() });
       var zoomControl = new kakao.maps.ZoomControl()
-      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
+      this.map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
       // marker.setMap(map);
     },
     addScript() {
