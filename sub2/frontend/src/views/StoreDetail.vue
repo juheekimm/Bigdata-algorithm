@@ -83,54 +83,56 @@
       <!--review list-->
       <v-flex md6 v-for="(review, index) in reviews" :key="index">
         <v-row>
-          <v-card class="reviewCard">
-            <v-list-item-content class="pb-0">
-              <v-row>
-                <v-col class="py-0">
-                  <span>
-                    <v-avatar size="2.2em" color="purple lighten-2" v-if="review.user.gender == '여'">
-                      <v-icon color="white">mdi-face-woman</v-icon>
-                    </v-avatar>
-                    <v-avatar size="2.2em" color="pink lighten-2" v-if="review.user.gender == '남'">
-                      <v-icon color="white">mdi-face</v-icon>
-                    </v-avatar>
-                      {{review.user.id}} ({{curYear-review.user.age+1}}세)
-                  </span>
-                </v-col>
-                <v-col class="py-0" style="align-self: center;text-align: end;">
-                  <span>
-                    <v-icon v-for="(index) in review.total_score" :key="index" color="yellow lighten-1">mdi-star</v-icon>
-                    <v-icon v-for="(index) in (5-review.total_score)" :key="index*10" color="grey lighten-2">mdi-star</v-icon>
-                  </span>
-                </v-col>
-                <!-- <v-col class="py-0">
-                    <v-btn fab x-small color="blue lighten-2">
-                      <v-icon color="white">mdi-pencil-outline</v-icon>
-                    </v-btn>
-                    <v-btn fab x-small color="red lighten-2">
-                      <v-icon color="white">mdi-trash-can</v-icon>
-                    </v-btn>
-                </v-col> -->
-              </v-row>
-            </v-list-item-content>
-            <v-card-text class="pa-0 pl-1 pt-1 pb-1">
-              <span style="color:#bcbcbc">{{review.reg_time.substring(0,10)}}</span>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-text>
-              {{review.content}}
-            </v-card-text>
-            <v-card-text class="pa-0 pb-3" style="text-align: end;">
-              <span>
-                <v-btn color="blue" text x-small class="pl-0">
-                  <u>수정</u>
-                </v-btn>
-                <v-btn color="blue" text x-small class="pl-0">
-                  <u>삭제</u>
-                </v-btn>
-              </span>
-            </v-card-text>
-          </v-card>
+          <v-hover v-slot:default="{ hover }" open-delay="30">
+            <v-card class="reviewCard" :elevation="hover ? 12 : 2">
+              <v-list-item-content class="pb-0">
+                <v-row>
+                  <v-col class="py-0">
+                    <span>
+                      <v-avatar size="2.2em" color="purple lighten-2" v-if="review.user.gender == '여'">
+                        <v-icon color="white">mdi-face-woman</v-icon>
+                      </v-avatar>
+                      <v-avatar size="2.2em" color="pink lighten-2" v-if="review.user.gender == '남'">
+                        <v-icon color="white">mdi-face</v-icon>
+                      </v-avatar>
+                        {{review.user.id}} ({{curYear-review.user.age+1}}세)
+                    </span>
+                  </v-col>
+                  <v-col class="py-0" style="align-self: center;text-align: end;">
+                    <span>
+                      <v-icon v-for="(index) in review.total_score" :key="index" color="yellow lighten-1">mdi-star</v-icon>
+                      <v-icon v-for="(index) in (5-review.total_score)" :key="index*10" color="grey lighten-2">mdi-star</v-icon>
+                    </span>
+                  </v-col>
+                  <!-- <v-col class="py-0">
+                      <v-btn fab x-small color="blue lighten-2">
+                        <v-icon color="white">mdi-pencil-outline</v-icon>
+                      </v-btn>
+                      <v-btn fab x-small color="red lighten-2">
+                        <v-icon color="white">mdi-trash-can</v-icon>
+                      </v-btn>
+                  </v-col> -->
+                </v-row>
+              </v-list-item-content>
+              <v-card-text class="pa-0 pl-1 pt-1 pb-1">
+                <span style="color:#bcbcbc">{{review.reg_time.substring(0,10)}}</span>
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-text>
+                {{review.content}}
+              </v-card-text>
+              <v-card-text class="pa-0 pb-3" style="text-align: end;">
+                <span>
+                  <v-btn color="blue" text x-small class="pl-0">
+                    <u>수정</u>
+                  </v-btn>
+                  <v-btn color="blue" text x-small class="pl-0">
+                    <u>삭제</u>
+                  </v-btn>
+                </span>
+              </v-card-text>
+            </v-card>
+          </v-hover>
         </v-row>
       </v-flex>
     </v-layout>
