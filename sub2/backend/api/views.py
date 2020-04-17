@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
+from rest_framework import status
 
 
 class SmallPagination(PageNumberPagination):
@@ -32,7 +33,6 @@ class AllStoreList(APIView):
         serializer = StoreSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
 class SearchStore(APIView):
 
     def get_query(self,condition,keyword):
@@ -49,11 +49,12 @@ class SearchStore(APIView):
             raise Http404
  
     def post(self, request):
-        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys():
+        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys() and 'size' in request.POST.keys():
             condition = request.POST['condition']
             keyword = request.POST['keyword']
             count = int(request.POST['count'])
-            queryset = self.get_query(condition,keyword)[:count]
+            size = int(request.POST['size'])
+            queryset = self.get_query(condition,keyword)[(count*size):(count*size)+size]
         else :
             queryset = Store.objects.all()[:10]
         serializer = StoreSerializer(queryset, many=True)
@@ -75,7 +76,41 @@ class SearchStroeforComplete(APIView):
         serializer = StoreNameSerializer(queryset, many=True)
         return Response(serializer.data)
 
+# 상점Id를 이용해서 리뷰(와 결합된 유저포함)들을 검색합니다.
+class SearchReviewbyStoreId(APIView):
 
+    def post(self, request):
+        if 'storeId' in request.POST.keys():
+            storeId = request.POST['storeId']
+
+            queryset = Review.objects.all().filter(store=storeId).select_related()
+            serializer = ReviewUserSerializer(queryset, many = True)
+            return Response(serializer.data)
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+# 상점Id를 이용해서 메뉴들을 검색합니다.
+class SearchMenubyStoreId(APIView):
+    def post(self, request):
+        if 'storeId' in request.POST.keys():
+            storeId = request.POST['storeId']
+
+            queryset = Menu.objects.all().filter(store_id=storeId)
+            serializer = MenuSerializer(queryset, many = True)
+            return Response(serializer.data)
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+class SearchStorebyStoreId(APIView):
+    def post(self, request):
+        if 'storeId' in request.POST.keys():
+            storeId = request.POST['storeId']
+
+            queryset = Store.objects.all().filter(id=storeId)
+            serializer = StoreSerializer(queryset, many = True)
+            return Response(serializer.data)
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
 
 #CRUD 
 class reviewCRUD(APIView):
