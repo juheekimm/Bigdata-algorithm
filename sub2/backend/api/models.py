@@ -45,8 +45,17 @@ class Review(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     total_score = models.IntegerField(default=0)
     content = models.TextField(null=True)
-    reg_time = models.DateTimeField(auto_now=True)
+    reg_time = models.DateTimeField(default=datetime.datetime.now())
 
+    # SET
+    # SQL_SAFE_UPDATES = 0;
+    #
+    # update
+    # api_review
+    # set
+    # reg_time = now()
+    # where
+    # reg_time = date('1970-01-01');
     def __str__(self):
         return [self.id, self.store, self.user, self.total_score]
 
