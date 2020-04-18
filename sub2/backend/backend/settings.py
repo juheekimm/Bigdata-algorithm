@@ -32,8 +32,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.admin",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
