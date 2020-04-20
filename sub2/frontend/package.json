@@ -16,6 +16,7 @@
     "material-design-icons-iconfont": "^5.0.1",
     "node-sass": "^4.13.0",
     "vue": "^2.6.10",
+    "vue-cookie": "^1.1.4",
     "vue-infinite-loading": "^2.4.5",
     "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.0.7",
