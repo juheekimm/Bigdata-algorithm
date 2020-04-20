@@ -32,8 +32,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.admin",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "api",
     "accounts.apps.AccountsConfig",
+    "recommend.apps.RecommendConfig",
     "rest_framework_swagger",
     "corsheaders", #CORS
 ]
@@ -102,6 +103,7 @@ DATABASES = {
     }
 }
 
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -126,7 +128,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # 세션 타임아웃 : 30분으로 설정
 SESSION_COOKIE_AGE = 1800

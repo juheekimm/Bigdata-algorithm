@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/token/refresh/', refresh_jwt_token),
     path('api/doc/', get_swagger_view(title="REST API Document")),
 
+    path("recommend/", include("recommend.urls")),
     # path('api/blog/', include('blog.urls'))
     # path('accounts/', include('django.contrib.auth.urls')),
     # path("", accounts.views.home, name="home").
