@@ -9,7 +9,7 @@ from rest_auth.registration.views import RegisterView
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ('nickname', 'gender', 'age')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

@@ -3,7 +3,7 @@ import pandas as pd
 from django.core.management.base import BaseCommand
 from backend import settings
 from api import models
-from accounts.models import Profile
+from accounts import models
 
 
 class Command(BaseCommand):
