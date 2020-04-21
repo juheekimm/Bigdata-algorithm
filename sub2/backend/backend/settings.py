@@ -68,7 +68,7 @@ if DEBUG:
 
 ROOT_URLCONF = "backend.urls"
 
-# allauth
+# 로그인을 위한 설정
 SITE_ID = 1
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 REST_AUTH_REGISTER_SERIALIZER = {
@@ -79,7 +79,8 @@ REST_AUTH_REGISTER_SERIALIZER = {
 }
 ACCOUNT_EMAIL_REQUIRED = False #로그인할 때 email은 필요없게
 REST_USE_JWT = True # JWT사용하자
-# allauth-end
+ACCOUNT_LOGOUT_ON_GET = True #get으로 데이터베이스를 바꿀 수 없기 때문에 예외를 둔다
+# 로그인을 위한 설정
 
 TEMPLATES = [
     {
