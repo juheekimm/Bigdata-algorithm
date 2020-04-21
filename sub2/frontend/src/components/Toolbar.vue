@@ -219,10 +219,8 @@ export default {
         http
           .post('/auth/regi',form)
           .then(response => {
-            // console.log(response.data)
-            console.log(response)
-            console.log(response.data)
             alert("회원가입에 성공헀습니다.")
+            this.joinDialog = false
           })
           .catch((error) => {
             // userName 중복
