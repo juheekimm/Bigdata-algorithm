@@ -1,12 +1,14 @@
 <template>
   <v-app-bar id="app-toolbar" app flat color="blue lighten-1">
-    <v-btn @click="test">test</v-btn>
+    <v-btn @click="test" text>set</v-btn>
+    <v-btn @click="test2" text>delete</v-btn>
     
     <v-btn v-if="responsive" dark icon @click.stop="onClickDrawer">
       <v-icon>mdi-view-list</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
     <v-btn text @click.stop="loginDialog = true">로그인해주세요.</v-btn>
+    <v-btn v-if="$cookie.get('token') != null" @click.stop="loginDialog = true">{{$cookie.get('token')}}</v-btn> 
     <v-dialog v-model="loginDialog" max-width="290">
       <v-card>
         <v-card-title>
@@ -15,18 +17,18 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" class="pa-0">
-                <v-text-field placeholder="ID" solo></v-text-field>
+              <v-col cols="12" class="px-0">
+                <v-text-field placeholder="ID" solo hide-details v-model="id"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="pa-0">
-                <v-text-field placeholder="Password" solo ></v-text-field>
+              <v-col cols="12" class="px-0">
+                <v-text-field type="password" placeholder="Password" solo hide-details v-model="password"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="pa-0">
-                <v-btn color="primary" large block><b>Login</b></v-btn>
+              <v-col cols="12" class="px-0">
+                <v-btn color="primary" large block @click="login"><b>Login</b></v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -93,7 +95,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapGetters, mapState } from "vuex";
 import http from '../http-common'
 import axios from "axios"
 
@@ -110,17 +112,12 @@ export default {
     age: "2000",
     nickname:"",
     passwordError:true,
-    rules: {
-          required: value => !!value || '반드시 입력해주세요.',
-          counter: value => value.length <= 20 || '20자가 넘었습니다.',
-          email: value => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            return pattern.test(value) || '이메일 형식에 맞지 않습니다.'
-          },
-    },
+    id: "",
+    password : "",
   }),
   computed: {
-    ...mapState("app", ["drawer"])
+    ...mapState("data", ["count","token"]),
+    
   },
   mounted() {
     this.onResponsiveInverted();
@@ -131,7 +128,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("app", ["setDrawer"]),
+    ...mapMutations("data", ["setToken","setUser"]),
     onClickDrawer() {
       this.setDrawer(!this.drawer);
     },
@@ -203,7 +200,14 @@ export default {
         return true
     },   
     test(){
-      return false
+      this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
+      console.log(this.$cookie.get('token'))
+      window.location.reload();
+      // this.$cookie.delete('token')
+    },
+    test2(){
+      this.$cookie.delete('token')
+      window.location.reload();
     },
     signup(){
       if(this.idHintMethod() == true && this.vertifyPassword() == true && this.passwordHintMethod()== true && this.emailHintMethod()==true && this.nicknameHintMethod() ==true){
@@ -239,6 +243,30 @@ export default {
         alert("양식을 다 지켜주세요.")
       }
 
+    },
+    login(){
+      let form = new FormData()
+      form.append('username', this.id)
+      form.append('password', this.password)
+
+      http
+        .post('/auth/login',form)
+        .then(response => {
+          console.log(response.data.token)
+          this.$cookie.set('token', response.data.token , { expires: '30m' });
+        })
+        .catch(err => {
+          if(err.response.data.non_field_errors != undefined){
+            alert("아이디와 비밀번호를 확인해주세요.")
+            this.password = ""
+          }else if(err.response.data.password != undefined){
+            alert("비밀번호를 확인해주세요.")
+            this.password = ""
+          }else{
+            alert("아이디와 비밀번호를 확인해주세요.")
+            this.password = ""
+          }
+        })
     },
   }
 };
