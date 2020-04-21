@@ -45,6 +45,11 @@ INSTALLED_APPS = [
     "recommend.apps.RecommendConfig",
     "rest_framework_swagger",
     "corsheaders", #CORS
+    "rest_auth", #login auth-start
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',#login auth
 ]
 
 MIDDLEWARE = [
@@ -63,7 +68,18 @@ if DEBUG:
 
 ROOT_URLCONF = "backend.urls"
 
+# allauth
+SITE_ID = 1
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+REST_AUTH_REGISTER_SERIALIZER = {
+    'REGISTER_SERIALIZER' : 'accounts.serializers.MyRegisterSerializer' 
+#     # 'LOGIN_SERIALIZER': 'path.to.custom.LoginSerializer',
+#     'TOKEN_SERIALIZER': 'accounts.serializers.TokenSerializer',
 
+}
+ACCOUNT_EMAIL_REQUIRED = False #로그인할 때 email은 필요없게
+REST_USE_JWT = True # JWT사용하자
+# allauth-end
 
 TEMPLATES = [
     {
@@ -138,9 +154,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # 이전 페이지로 돌아가기
 # LOGIN_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = '/profile'
 LOGOUT_REDIRECT_URL = '/login'
-LOGIN_URL = '/login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -160,6 +174,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10,
 }
+
 
 JWT_AUTH = {
     'JWT_SECRET_KEY': SECRET_KEY,

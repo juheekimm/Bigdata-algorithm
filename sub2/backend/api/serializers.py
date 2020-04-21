@@ -1,3 +1,4 @@
+from accounts.models import Profile
 from .models import *
 from rest_framework import serializers
 
@@ -15,7 +16,7 @@ class MenuSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         fields = '__all__'
 
 
@@ -31,6 +32,7 @@ class StoreNameSerializer(serializers.ModelSerializer):
             "store_name",
         ]
 
+# 이렇게 해야 되는 건데 왜...
 class ReviewUserSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:

@@ -85,7 +85,7 @@ class SearchReviewbyStoreId(APIView):
             storeId = request.POST['storeId']
 
             queryset = Review.objects.all().filter(store=storeId).select_related()
-            serializer = ReviewUserSerializer(queryset, many = True)
+            serializer = ReviewSerializer(queryset, many = True)
             return Response(serializer.data)
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})

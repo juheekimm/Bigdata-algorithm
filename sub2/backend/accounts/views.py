@@ -4,6 +4,10 @@ from django.views import View
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.middleware import csrf
 
 from .forms import ProfileForm
 from .models import Profile
@@ -28,8 +32,13 @@ def profile(request):
 
 def signup(request):
     if request.method == 'POST':
+        print(request.POST)
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+
         user_form = UserCreationForm(request.POST)
         profile_form = ProfileForm(request.POST)
+
+        print(user_form.is_valid())
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
@@ -42,6 +51,9 @@ def signup(request):
         user_form = UserCreationForm()
         profile_form = ProfileForm()
     return render(request, 'registration/signup_form.html', { 'form' : user_form, 'profile_form': profile_form })
+
+
+
 
 # def login(request):
 #     if request.method == "POST":

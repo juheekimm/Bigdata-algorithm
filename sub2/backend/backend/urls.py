@@ -4,6 +4,7 @@ from django.urls import path, include
 from accounts.views import signup, profile, IndexView
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
+from django.conf.urls import url, include
 
 # from django.conf import settings
 # from django.conf.urls.static import static
@@ -16,11 +17,18 @@ urlpatterns = [
     path("signup/", signup, name="signup"),
     path('profile/', profile, name='profile'),
 
+
     path("api/", include("api.urls")),
     path('api/token/', obtain_jwt_token),
     path('api/token/verify/', verify_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
     path('api/doc/', get_swagger_view(title="REST API Document")),
+
+    path("auth/", include("accounts.urls")),
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/',include('rest_auth.registration.urls'), name="signup"),
+
+
 
     path("recommend/", include("recommend.urls")),
     # path('api/blog/', include('blog.urls'))
