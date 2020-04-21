@@ -15,17 +15,17 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pa-0">
                 <v-text-field placeholder="ID" solo></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pa-0">
                 <v-text-field placeholder="Password" solo ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pa-0">
                 <v-btn color="primary" large block><b>Login</b></v-btn>
               </v-col>
             </v-row>
@@ -227,20 +227,14 @@ export default {
           .catch((error) => {
             // userName 중복
             if(error.response.data.username != undefined){
-
-              console.log(error.response.data.username)
+              alert("중복된 ID입니다.")
+              this.username = ""
             }
-
             // email 중복
-            if(error.response.data.email != undefined){
-              console.log(error.response.data.email)
+            else if(error.response.data.email != undefined){
+              alert("중복된 email입니다.")
+              this.email = ""
             }
-
-            if(error.response.data.password1 != undefined){
-              this.passwordError = error.response.data.password1[0]
-            }
-
-            console.log(error.response.data)
 
         })
       }else{ // 조건이 안되면
