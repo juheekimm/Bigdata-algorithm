@@ -11,8 +11,8 @@ from django.urls import path
 
 urlpatterns = [
     url('registration/',include('rest_auth.registration.urls'), name="signup"),
-    url('regi/', serializers.CustomRegistrationView.as_view(), name="rest_name_register"),
-    url('login/', serializers.CustomLoginView.as_view(), name="CustomLoginView")
+    url('regi', serializers.CustomRegistrationView.as_view(), name="rest_name_register"),
+    url('login', serializers.CustomLoginView.as_view(), name="CustomLoginView")
 ]
 # from django.contrib import admin
 # from django.contrib.auth import views as auth_views

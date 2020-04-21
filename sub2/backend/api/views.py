@@ -15,7 +15,6 @@ class SmallPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 50
 
-
 class StoreViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StoreSerializer
     pagination_class = SmallPagination
@@ -26,7 +25,6 @@ class StoreViewSet(viewsets.ModelViewSet):
             models.Store.objects.all().filter(store_name__contains=name).order_by("id")
         )
         return queryset
-
 
 class AllStoreList(APIView):
     def get(self, request, format=None):
