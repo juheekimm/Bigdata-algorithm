@@ -1,8 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
-import numpy as np
-import matplotlib.pyplot as plt
 
 def query_MySqlDB(query):
     # sqlalchemy engine

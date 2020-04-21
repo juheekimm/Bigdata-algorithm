@@ -10,7 +10,8 @@ def query_MySqlDB(query):
         password="ssafy",
         host="52.79.223.182",
         port="3306",
-        database="django_test"
+        database="django_test",
+        query = {'charset': 'utf8mb4'}
     ))
 
     conn = engine.connect()
@@ -28,4 +29,4 @@ def query_MySqlDB(query):
     print(generator_df)
     return generator_df
 
-query_MySqlDB("select id, total_score from api_review")
+query_MySqlDB("select * from api_review")
