@@ -1,29 +1,96 @@
 <template>
-  <v-app-bar id="app-toolbar" app flat color="blue lighten-1">
-    <v-btn @click="test2" text>set</v-btn>
-    <!-- <v-btn @click="test2" text>delete</v-btn> -->
-    <v-btn v-if="responsive" dark icon @click.stop="onClickDrawer">
-      <v-icon>mdi-view-list</v-icon>
+    <v-btn v-if="$cookie.get('token') == null" @click.stop="loginDialog = true" rounded>로그인
+    <v-dialog v-model="loginDialog" max-width="290">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Login</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" class="px-0">
+                <v-text-field placeholder="ID" solo hide-details v-model="id"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="px-0">
+                <v-text-field type="password" placeholder="Password" solo hide-details v-model="password"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="px-0">
+                <v-btn color="primary" large block @click="login"><b>Login</b></v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="joinDialog = !joinDialog" small> 아이디가 없으신가요?회원가입하러 가기</v-btn>
+        </v-card-actions> 
+      </v-card>
+    </v-dialog>
+    <v-dialog
+        v-model="joinDialog"
+        max-width="500px"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="headline">회원가입</span>
+          </v-card-title>
+          <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" class="pa-0">
+                <v-text-field label="ID*" v-model="username" required :rules="[idHintMethod]"></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-text-field label="Email*" v-model="email" required :rules="[emailHintMethod]"></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-text-field id="pw" label="Password*" type="password" v-model="password1" required :rules="[passwordHintMethod]"></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-text-field label="password확인" type="password" v-model="password2" required :rules="[vertifyPassword]"></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-text-field label="닉네임" v-model="nickname" required :rules="[nicknameHintMethod]"></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-radio-group v-model="gender" row>
+                  <span>성별</span>
+                  <v-spacer></v-spacer>
+                  <v-radio label="남" value="남"></v-radio>
+                  <v-radio label="여" value="여"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col cols="12" class="pa-0">
+                <v-select
+                  :items="selectorItems()"
+                  label="연령"
+                  v-model="age"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+          <v-card-actions>
+            <v-layout justify-end>
+              <v-btn color="primary" text @click="joinDialog = !joinDialog">Close</v-btn>
+              <v-btn color="primary" @click="signup">signup</v-btn>
+            </v-layout>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
     </v-btn>
-    <v-spacer></v-spacer>
-    <loginDialog v-if="$cookie.get('token') == null"></loginDialog>
-    <v-btn v-if="$cookie.get('token') != null" @click.stop="test2" class="mx-1" rounded>myPage</v-btn>
-    <v-btn v-if="$cookie.get('token') != null" @click.stop="logout" class="mx-1" rounded>로그아웃</v-btn>
     
-  </v-app-bar>
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex";
 import http from '../http-common'
-import loginDialog from './loginDialog'
 
 export default {
-  components: {
-    loginDialog
-  },
   data: () => ({
-    responsive: false,
     loginDialog: false,
     joinDialog: false,
     username: "",
@@ -38,27 +105,14 @@ export default {
     password : "",
   }),
   computed: {
-    ...mapState("data", ["count","token"]),
+    
   },
   mounted() {
-    this.onResponsiveInverted();
-    window.addEventListener("resize", this.onResponsiveInverted);
   },
   beforeDestroy() {
-    window.removeEventListener("resize", this.onResponsiveInverted);
   },
+
   methods: {
-    ...mapMutations("app", ["setDrawer"]),
-    onClickDrawer() {
-      this.setDrawer(!this.drawer);
-    },
-    onResponsiveInverted() {
-      if (window.innerWidth < 1800) {
-        this.responsive = true;
-      } else {
-        this.responsive = false;
-      }
-    },
     selectorItems(){
       var list = []
       var curYear = new Date().getFullYear()
@@ -120,17 +174,10 @@ export default {
         return true
     },   
     test(){
-      // this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
+      // this.$cookie.set('token', 'gg' , { expires: '60s' });
       console.log(this.$cookie.get('csrftoken'))
       // window.location.reload();
       // this.$cookie.delete('token')
-    },
-    test2(){
-      let form = new FormData()
-      form.append('username', 'taemin010')
-      form.append('password', 'taemin1234')
-  
-      
     },
     signup(){
       if(this.idHintMethod() == true && this.vertifyPassword() == true && this.passwordHintMethod()== true && this.emailHintMethod()==true && this.nicknameHintMethod() ==true){
@@ -195,26 +242,6 @@ export default {
           }
       })
     },
-    logout(){
-      this.$cookie.delete('token')
-      window.location.reload()
-      // let config = {
-      //   headers : {
-      //     'access-token' : this.$cookie.get('token'),
-      //     'withCredentials':true
-      //     }
-      // }
-      // session
-      //   .post('/rest-auth/logout/', config)
-      //   .then(response => {
-      //     console.log(response.data)
-      //     this.$cookie.delete('token')
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
-
-    }
   }
 };
 </script>

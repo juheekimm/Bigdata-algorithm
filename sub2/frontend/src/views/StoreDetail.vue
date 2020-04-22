@@ -76,10 +76,12 @@
       <!--review title-->
       <v-flex md12>
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
-          Reveiw ({{ reviews.length }}건)
+          Reveiw ({{ reviews.length }}건) 
+          <v-btn text @click="reviewDialog = true"><v-icon color="blue">mdi-pencil</v-icon><b>리뷰작성</b></v-btn>
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
       </v-flex>
+      
       <!--review list-->
       <v-flex md6 v-for="(review, index) in reviews" :key="index">
         <v-row>
@@ -95,7 +97,7 @@
                       <v-avatar size="2.2em" color="pink lighten-2" v-if="review.user.gender == '남'">
                         <v-icon color="white">mdi-face</v-icon>
                       </v-avatar>
-                        {{review.user.id}} ({{curYear-review.user.age+1}}세)
+                        {{review.user.nickname == null?"익명":review.user.nickname}} ({{curYear-review.user.age+1}}세)
                     </span>
                   </v-col>
                   <v-col class="py-0" style="align-self: center;text-align: end;">
@@ -136,14 +138,83 @@
         </v-row>
       </v-flex>
     </v-layout>
+    <!-- review dialog-->
+    <v-dialog
+        v-model="reviewDialog"
+        max-width="500px"
+      >
+      <!-- 리뷰작성 -->
+      <v-card v-if="$cookie.get('token') != null">
+        <v-card-title>
+          <span class="headline">리뷰작성</span>
+        </v-card-title>
+        <v-card-text>  
+          <v-layout justify-center>
+            <div> "<b>{{store.store_name}}</b>"은 어떠셨나요?</div>
+          </v-layout>         
+        </v-card-text>
+        <v-card-text>  
+          <v-layout justify-center>
+            <v-rating v-model="rating" color="yellow lighten-1" hover size="40" background-color="grey lighten-2" dense></v-rating>
+          </v-layout>         
+        </v-card-text>
+        <v-card-text>  
+          <v-layout justify-center>
+            <v-textarea
+              v-model="contents"
+              clearable
+              :counter="contentsLength"
+              label="리뷰를 작성해주세요"
+              outlined
+              rows=4
+              :rules="[contentRule]"
+            ></v-textarea>
+          </v-layout>         
+        </v-card-text>
+        <v-card-actions>
+          <v-layout justify-end>
+            <v-btn color="primary" text @ @click="reviewDialog = !reviewDialog">Close</v-btn>
+            <v-btn color="primary" @click="writeReview">작성</v-btn>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+      
+      <!-- 로그인 -->
+      <v-card v-if="$cookie.get('token') == null">
+        <v-card-title>
+          <v-layout justify-center>
+            <span class="headline">안내</span>
+          </v-layout> 
+        </v-card-title>
+        <v-card-text class="mt-5">
+          <v-layout justify-center>
+              <div style="color:red"> 리뷰작성은 로그인 후 가능합니다 </div>
+          </v-layout>        
+        </v-card-text>
+        <v-card-text>
+          <v-layout justify-center>
+              <loginDialog></loginDialog>
+          </v-layout>        
+        </v-card-text>
+        <v-card-actions>
+          <v-layout justify-end>
+            <v-btn color="primary" text @click="reviewDialog = !reviewDialog">Close</v-btn>
+          </v-layout>
+        </v-card-actions>        
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import http from '../http-common'
 import axios from 'axios'
+import loginDialog from '../components/loginDialog'
 
 export default {
+  components: {
+    loginDialog
+  },
   data: () => ({
     store: {},
     menus: [],
@@ -151,6 +222,10 @@ export default {
     totalScore: 0,
     isLoading: true,
     curYear: 0,
+    reviewDialog : false,
+    rating : 4,
+    contents : "",
+    contentsLength : 300,
   }),
   created() {
     this.loadData()
@@ -168,7 +243,7 @@ export default {
 
       const requestStore = http.post('/api/SearchStorebyStoreId', form)
       const requestMenu = http.post('/api/SearchMenubyStoreId', form)
-      const requestReview = http.post('api/SearchReviewbyStoreId', form)
+      const requestReview = http.post('/api/SearchReviewbyStoreId', form)
 
       axios
         .all([requestStore, requestMenu, requestReview])
@@ -181,6 +256,8 @@ export default {
             this.store = responseStore.data[0]
             this.menus = responseMenu.data
             this.reviews = responesReview.data
+
+            console.log(this.reviews)
 
             this.totalScore = 0
             this.reviews.forEach((element) => {
@@ -223,6 +300,23 @@ export default {
     calToday() {
       var today = new Date();
       this.curYear = today.getFullYear();
+    },
+    contentRule() {
+      var con = this.contents
+      if(con.length > this.contentsLength)
+        return this.contentsLength+"자를 넘기지 마세요"
+      else
+        return true
+    },
+    writeReview() {
+      if(contentRule == true){
+        
+      }else{
+        alert("300자이하로 작성해주세요.")
+      }
+    },
+    test(){
+      console.log("ddd")
     }
   },
 }

@@ -6,7 +6,7 @@ module.exports = {
                 target: "http://localhost:8000/"
             }
         },
-        https: true
+        // https: true
     },
     transpileDependencies: ["vuetify"]
 };
