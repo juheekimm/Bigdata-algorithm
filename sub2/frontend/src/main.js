@@ -4,12 +4,26 @@ import vuetify from "./plugins/vuetify";
 import infiniteScroll from "vue-infinite-scroll";
 import router from "./router";
 import store from "./store";
+import VueAxios from 'vue-axios'
+import VueAuthenticate from 'vue-authenticate'
+import axios from 'axios';
 
 var VueCookie = require('vue-cookie');
 
+Vue.use(VueAxios, axios)
 Vue.use(VueCookie);
 Vue.config.productionTip = false;
 Vue.use(infiniteScroll);
+Vue.use(VueAuthenticate, {
+    baseUrl: 'http://localhost:8000', // Your API domain
+
+    providers: {
+        github: {
+            clientId: '',
+            redirectUri: 'http://localhost:8080' // Your client app URL
+        }
+    }
+})
 
 new Vue({
     vuetify,

@@ -1,14 +1,14 @@
 <template>
   <v-app-bar id="app-toolbar" app flat color="blue lighten-1">
-    <v-btn @click="test" text>set</v-btn>
-    <v-btn @click="test2" text>delete</v-btn>
-    
+    <v-btn @click="test2" text>set</v-btn>
+    <!-- <v-btn @click="test2" text>delete</v-btn> -->
     <v-btn v-if="responsive" dark icon @click.stop="onClickDrawer">
       <v-icon>mdi-view-list</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
-    <v-btn text @click.stop="loginDialog = true">로그인해주세요.</v-btn>
-    <v-btn v-if="$cookie.get('token') != null" @click.stop="loginDialog = true">{{$cookie.get('token')}}</v-btn> 
+    <v-btn v-if="$cookie.get('token') == null" @click.stop="loginDialog = true" rounded>로그인</v-btn>
+    <v-btn v-if="$cookie.get('token') != null" @click.stop="test2" class="mx-1" rounded>myPage</v-btn>
+    <v-btn v-if="$cookie.get('token') != null" @click.stop="logout" class="mx-1" rounded>로그아웃</v-btn>
     <v-dialog v-model="loginDialog" max-width="290">
       <v-card>
         <v-card-title>
@@ -90,7 +90,7 @@
             </v-layout>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+    </v-dialog>
   </v-app-bar>
 </template>
 
@@ -98,6 +98,7 @@
 import { mapMutations, mapGetters, mapState } from "vuex";
 import http from '../http-common'
 import axios from "axios"
+import session from '../mySession'
 
 export default {
   data: () => ({
@@ -128,7 +129,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("data", ["setToken","setUser"]),
+    ...mapMutations("app", ["setDrawer"]),
     onClickDrawer() {
       this.setDrawer(!this.drawer);
     },
@@ -192,22 +193,25 @@ export default {
     },
     nicknameHintMethod(){
       const nickname = this.nickname
-      if(nickname.length < 3)
-        return "닉네임을 3자리이상 작성해주세요"
-      else if(nickname.lenght > 6)
-        return "닉네임은 최대 6자 까지 가능합니다."
+      if(nickname.length < 2)
+        return "닉네임을 2자리이상 작성해주세요"
+      else if(nickname.length > 5)
+        return "닉네임은 최대 5자 까지 가능합니다."
       else 
         return true
     },   
     test(){
-      this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
-      console.log(this.$cookie.get('token'))
-      window.location.reload();
+      // this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
+      console.log(this.$cookie.get('csrftoken'))
+      // window.location.reload();
       // this.$cookie.delete('token')
     },
     test2(){
-      this.$cookie.delete('token')
-      window.location.reload();
+      let form = new FormData()
+      form.append('username', 'taemin010')
+      form.append('password', 'taemin1234')
+  
+      
     },
     signup(){
       if(this.idHintMethod() == true && this.vertifyPassword() == true && this.passwordHintMethod()== true && this.emailHintMethod()==true && this.nicknameHintMethod() ==true){
@@ -238,6 +242,8 @@ export default {
               this.email = ""
             }
 
+            console.log(error)
+
         })
       }else{ // 조건이 안되면
         alert("양식을 다 지켜주세요.")
@@ -250,9 +256,10 @@ export default {
       form.append('password', this.password)
 
       http
-        .post('/auth/login',form)
+        .post('/auth/token/',form)
         .then(response => {
-          console.log(response.data.token)
+          console.log(response)
+          console.log(response.data)
           this.$cookie.set('token', response.data.token , { expires: '30m' });
         })
         .catch(err => {
@@ -266,8 +273,26 @@ export default {
             alert("아이디와 비밀번호를 확인해주세요.")
             this.password = ""
           }
-        })
+      })
     },
+    logout(){
+      let config = {
+        headers : {
+          'access-token' : this.$cookie.get('token'),
+          'withCredentials':true
+          }
+      }
+      session
+        .post('/rest-auth/logout/', config)
+        .then(response => {
+          console.log(response.data)
+          this.$cookie.delete('token')
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+    }
   }
 };
 </script>

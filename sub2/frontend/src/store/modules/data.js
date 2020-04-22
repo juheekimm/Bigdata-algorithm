@@ -15,7 +15,7 @@ const state = {
         lng: 0.0,
         categories: []
     },
-    token: "sibal",
+    token: "",
     user: {},
     count: 1,
 };
