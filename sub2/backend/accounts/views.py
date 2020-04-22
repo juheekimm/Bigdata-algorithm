@@ -5,9 +5,6 @@ from django.contrib.auth.forms import UserCreationForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from .forms import ProfileForm
 from .models import Profile
@@ -54,23 +51,6 @@ def signup(request):
         profile_form = ProfileForm()
     return render(request, 'registration/signup_form.html', { 'form' : user_form, 'profile_form': profile_form })
 
-
-
-@api_view(['POST'])
-@permission_classes((IsAuthenticated, ))
-@authentication_classes((JSONWebTokenAuthentication,))
-def taeminok(request,user=None):
-    
-    #token에서 user_id 추출하기
-    token = request.headers['Authorization'][4:]
-    payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
-    user_id = payload['user_id']
-
-    return Response({"ok" : payload['user_id'], })
-
-@api_view(['POST'])
-def taeminno(request):
-    return Response({"no" : "no"})
 
 
 # def login(request):

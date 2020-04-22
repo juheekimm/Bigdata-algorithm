@@ -8,6 +8,15 @@ from rest_framework.response import Response
 from django.http import Http404
 from rest_framework import status
 from haversine import haversine
+from django.core.serializers import serialize
+
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+import jwt
+from backend.settings import JWT_AUTH
+from accounts.models import Profile
+import json
 
 
 class SmallPagination(PageNumberPagination):
@@ -82,8 +91,8 @@ class SearchReviewbyStoreId(APIView):
         if 'storeId' in request.POST.keys():
             storeId = request.POST['storeId']
 
-            queryset = Review.objects.all().filter(store=storeId).select_related()
-            serializer = ReviewSerializer(queryset, many = True)
+            queryset = Review.objects.all().filter(store=storeId).select_related().order_by('-reg_time')
+            serializer = ReviewUserSerializer(queryset, many = True)
             return Response(serializer.data)
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
@@ -110,6 +119,36 @@ class SearchStorebyStoreId(APIView):
             return Response(serializer.data)
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
+def writeReview(request,user=None):
+    
+    #token에서 user_id 추출하기
+    token = request.headers['Authorization'][4:]
+    payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
+    id_user = payload['user_id']
+
+    #id_user로 profile id 알아내기
+    queryset = Profile.objects.all().filter(user_id=id_user)
+    queryset_string = serialize('json', queryset)
+    queryset_json = json.loads(queryset_string)
+    user_id = queryset_json[0]['pk']
+
+    #request.body
+    total_score = request.POST['total_score']
+    content = request.POST['content']
+    store_id = request.POST['store_id']
+
+    #
+    data = Review(total_score=total_score,content=content,store_id=store_id,user_id=user_id)
+    data.save()
+
+    # print(request.POST)
+
+    return Response({"ok" : payload['user_id'], })
+
 
 #CRUD 
 class reviewCRUD(APIView):

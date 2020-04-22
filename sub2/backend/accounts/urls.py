@@ -14,8 +14,6 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 urlpatterns = [
     url('regi', serializers.CustomRegistrationView.as_view(), name="rest_name_register"),
-    url('taeminok',views.taeminok,name="SearchMenubyStoreId"),
-    url('taeminno',views.taeminno,name="SearchStorebyStoreId"),
     path('token/', obtain_jwt_token),
     path('token/verify/', verify_jwt_token),
     path('token/refresh/', refresh_jwt_token),
