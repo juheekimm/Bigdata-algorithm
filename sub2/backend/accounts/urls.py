@@ -2,6 +2,9 @@ from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 from accounts import views, serializers
 from django.urls import path
+from accounts import views
+from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
+
 
 
 # router = DefaultRouter(trailing_slash=False)
@@ -10,9 +13,12 @@ from django.urls import path
 # urlpatterns = router.urls
 
 urlpatterns = [
-    url('registration/',include('rest_auth.registration.urls'), name="signup"),
     url('regi', serializers.CustomRegistrationView.as_view(), name="rest_name_register"),
-    url('login', serializers.CustomLoginView.as_view(), name="CustomLoginView")
+    url('taeminok',views.taeminok,name="SearchMenubyStoreId"),
+    url('taeminno',views.taeminno,name="SearchStorebyStoreId"),
+    path('token/', obtain_jwt_token),
+    path('token/verify/', verify_jwt_token),
+    path('token/refresh/', refresh_jwt_token),
 ]
 # from django.contrib import admin
 # from django.contrib.auth import views as auth_views

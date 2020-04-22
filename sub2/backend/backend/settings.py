@@ -29,6 +29,23 @@ DEBUG = True
 ALLOWED_HOSTS = '*'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'Access-Control-allow-origin',
+    'Access-Control-Allow-Credentials',
+    'withcredentials',
+    'content-type',
+    'cache',
+    'Redirect'
+]
+SESSION_COOKIE_SAMESITE_FORCE_ALL = True
+# CORS_ALLOW_METHODS = [
+#     'DELETE',
+#     'GET',
+#     'OPTIONS',
+#     'PATCH',
+#     'POST',
+#     'PUT',
+# ]
 
 # Application definition
 INSTALLED_APPS = [
@@ -60,7 +77,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'django_cookies_samesite.middleware.CookiesSameSite',
 ]
 
 if DEBUG:
@@ -78,7 +96,8 @@ REST_AUTH_REGISTER_SERIALIZER = {
 
 }
 ACCOUNT_EMAIL_REQUIRED = False #로그인할 때 email은 필요없게
-REST_USE_JWT = True # JWT사용하자
+REST_USE_JWT = False# JWT사용하자
+JWT_AUTH_COOKIE = True
 ACCOUNT_LOGOUT_ON_GET = True #get으로 데이터베이스를 바꿀 수 없기 때문에 예외를 둔다
 # 로그인을 위한 설정
 
@@ -183,6 +202,8 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'accounts.serializers.jwt_response_payload_handler',
 }
 
 PASSWORD_HASHERS = (
