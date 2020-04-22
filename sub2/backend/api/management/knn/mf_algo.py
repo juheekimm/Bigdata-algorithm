@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sklearn.metrics.pairwise import cosine_similarity
 
+#아이템 기반 협업 필터링
 def query_MySqlDB(query):
     # sqlalchemy engine
     engine = create_engine(URL(
@@ -22,11 +23,6 @@ def query_MySqlDB(query):
                             con=conn)
                             # chunksize = 3
                             # size you want to fetch each time
-
-    # for dataframe in generator_df:
-        # for row in dataframe:
-        #     pass
-        # whatever you want to do
 
     # print(generator_df)
     return generator_df
@@ -54,9 +50,9 @@ item_based_collabor = cosine_similarity(review_user_rating)
 # print(item_based_collabor)
 
 item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
-print(item_based_collabor.head())
+# print(item_based_collabor.head())
 
 def get_item_based_collabor(store_name):
-    return item_based_collabor[store_name].sort_values(ascending=False)[:10]
+    return item_based_collabor[store_name].sort_values(ascending=False)[:6]
 
-print(get_item_based_collabor('아트몬스터'))
+print(get_item_based_collabor('아비꼬'))
