@@ -479,13 +479,18 @@ export default {
           http
             .post('/api/deleteReview',form,headers)
             .then(response => {
-              console.log(response.data)
+              var state = response.data.state
+              if(state == "success"){
+                alert(response.data.message)
+                this.loadReviewList()
+              }else{
+                alert(response.data.message)
+              }
             })
             .catch(err => {
               console.log(err)
             })
         }
-        console.log(result)
       }
     },
     test(){
