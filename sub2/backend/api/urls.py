@@ -17,6 +17,8 @@ urlpatterns = [
     url('SearchStorebyStoreId',views.SearchStorebyStoreId.as_view(),name="SearchStorebyStoreId"),
     url('SearchNearbyStore',views.searchNearbyStore.as_view(),name="searchNearbyStore"),
     url('writeReview',views.writeReview),
+    url('updateReview',views.updateReview),
+    url('deleteReview',views.deleteReview),
     # path('searchName/', views.search_storeName.as_view(), name="store"),
     # path('searchStore/', views.serachStore.as_view(), name="store"),
     # path('review/',views.reviewCRUD.as_view(),name="review")
