@@ -39,10 +39,8 @@ class ReviewUserSerializer(serializers.ModelSerializer):
         # fidels = ("reviewId","userId","storeId","contents")
         fields = '__all__'
 
-
-class ReviewStoreSerializer(serializers.ModelSerializer):
-    store = StoreSerializer(read_only=True)
-    class Meta:
-        model = Review
-        # fidels = ("reviewId","userId","storeId","contents")
-        fields = '__all__'
+# # add juheekim
+# class StoreRecoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Store
+#         fields = '__all__'

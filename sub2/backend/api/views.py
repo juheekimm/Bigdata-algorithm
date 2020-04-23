@@ -18,9 +18,11 @@ from backend.settings import JWT_AUTH
 from accounts.models import Profile
 from accounts.serializers import ProfileSerializer
 import json
-
 from django.utils import timezone
 
+# add juheekim
+from sqlalchemy import create_engine
+from sqlalchemy.engine.url import URL
 
 class SmallPagination(PageNumberPagination):
     page_size = 10
@@ -306,6 +308,52 @@ def UserReviewbyToken(request,user=None):
 
     return Response(serializer.data)
 
+# add juheekim
+def query_MySqlDB(query):
+    # sqlalchemy engine
+    engine = create_engine(URL(
+        drivername="mysql",
+        username="root",
+        password="aaaa",
+        host="52.79.223.182",
+        port="3306",
+        database="django_test",
+        query = {'charset': 'utf8mb4'}
+    ))
+
+    conn = engine.connect()
+    result = conn.execute(query)
+    print(result)
+
+    return result
+
+# 사용자의 연령, 성별 정보를 이용하여 추천음식점 검색
+# 같은 연령대, 성별을 가진 사람들이 높게 평가한 음식점 리스트를 반환
+class storeRecobyUserInfo(APIView):
+    def post(self, request):
+        req = json.loads(request.body)
+        keys = req.keys()
+        print('age' in keys)
+        if ('age' in keys and 'gender' in keys):
+        
+            age = int((timezone.now().year - int(req['age']) + 1) / 10) * 10
+            print(age)
+            gender = req['gender']
+
+            return Response(query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+                + " from api_review r"
+                + " join accounts_profile p"
+                + " on r.user_id = p.id" 
+                    + " and p.age <= (year(now()) - " + str(int(age)) + ")"
+                    + " and p.age > (year(now()) - " + str(int(age) + 9) + ")"
+                    + " and p.gender = '" + str(gender) + "'"
+                + " group by store_id"
+                + " having count(store_id) >= 2"
+                    + " and avg(total_score) >= 4.5"
+                + " order by count desc, avg desc"
+                + " limit 5;"))
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
 
 # @api_view(['POST'])
 # @permission_classes((IsAuthenticated, ))
