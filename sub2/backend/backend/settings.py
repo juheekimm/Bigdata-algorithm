@@ -35,7 +35,8 @@ CORS_ALLOW_HEADERS = [
     'withcredentials',
     'content-type',
     'cache',
-    'Redirect'
+    'Redirect',
+    'Authorization'
 ]
 SESSION_COOKIE_SAMESITE_FORCE_ALL = True
 # CORS_ALLOW_METHODS = [
@@ -200,7 +201,7 @@ JWT_AUTH = {
     'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_ALGORITHM': 'HS256',
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=30),
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),
     'JWT_RESPONSE_PAYLOAD_HANDLER':
         'accounts.serializers.jwt_response_payload_handler',
