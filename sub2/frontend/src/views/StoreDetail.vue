@@ -4,12 +4,13 @@
     fill-height
     style="background-color: white; padding-top: 1.5em;"
   >
+  
     <!-- STORE -->
     <v-layout wrap mt-5 class="mx-3" md12>
       <!--STORE title-->
       <v-flex md12>
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
-          Store
+          Store<v-btn @click="test">ddddd</v-btn>
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
       </v-flex>
@@ -74,7 +75,7 @@
       </v-flex>
 
       <!--review title-->
-      <v-flex md12>
+      <v-flex md12 id ="reviewTitle">
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
           Reveiw ({{ reviews.length }}건) 
           <v-btn text @click="reviewDialog = true"><v-icon color="blue">mdi-pencil</v-icon><b>리뷰작성</b></v-btn>
@@ -106,14 +107,6 @@
                       <v-icon v-for="(index) in (5-review.total_score)" :key="index*10" color="grey lighten-2">mdi-star</v-icon>
                     </span>
                   </v-col>
-                  <!-- <v-col class="py-0">
-                      <v-btn fab x-small color="blue lighten-2">
-                        <v-icon color="white">mdi-pencil-outline</v-icon>
-                      </v-btn>
-                      <v-btn fab x-small color="red lighten-2">
-                        <v-icon color="white">mdi-trash-can</v-icon>
-                      </v-btn>
-                  </v-col> -->
                 </v-row>
               </v-list-item-content>
               <v-card-text class="pa-0 pl-1 pt-1 pb-1">
@@ -125,10 +118,10 @@
               </v-card-text>
               <v-card-text class="pa-0 pb-3" style="text-align: end;">
                 <span>
-                  <v-btn color="blue" text x-small class="pl-0">
+                  <v-btn color="blue" text x-small class="pl-0" @click="openReviewWindow(review.user.user,review.content,review.total_score,review.id)">
                     <u>수정</u>
                   </v-btn>
-                  <v-btn color="blue" text x-small class="pl-0">
+                  <v-btn color="blue" text x-small class="pl-0" @click="deleteReview(review.id)">
                     <u>삭제</u>
                   </v-btn>
                 </span>
@@ -138,7 +131,7 @@
         </v-row>
       </v-flex>
     </v-layout>
-    <!-- review dialog-->
+    <!-- write review dialog-->
     <v-dialog
         v-model="reviewDialog"
         max-width="500px"
@@ -203,6 +196,49 @@
         </v-card-actions>        
       </v-card>
     </v-dialog>
+    <!-- update review dialog-->
+    <v-dialog
+        v-model="reviewUpdateDialog"
+        max-width="500px"
+      >
+      <!-- 리뷰작성 -->
+      <v-card>
+        <v-card-title>
+          <span class="headline">리뷰 수정</span>
+        </v-card-title>
+        <v-card-text>  
+          <v-layout justify-center>
+            <div> "<b>{{store.store_name}}</b>"은 어떠셨나요?</div>
+          </v-layout>         
+        </v-card-text>
+        <v-card-text>  
+          <v-layout justify-center>
+            <v-rating v-model="rating" color="yellow lighten-1" hover size="40" background-color="grey lighten-2" dense></v-rating>
+          </v-layout>         
+        </v-card-text>
+        <v-card-text>  
+          <v-layout justify-center>
+            <v-textarea
+              v-model="contents"
+              clearable
+              :counter="contentsLength"
+              label="리뷰를 작성해주세요"
+              outlined
+              rows=4
+              :rules="[contentRule]"
+            ></v-textarea>
+          </v-layout>         
+        </v-card-text>
+        <v-card-actions>
+          <v-layout justify-end>
+            <v-btn color="primary" text @ @click="reviewUpdateDialog = !reviewUpdateDialog">Close</v-btn>
+            <v-btn color="primary" @click="updateReview">수정</v-btn>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+      
+    
+    </v-dialog>
   </v-container>
 </template>
 
@@ -226,6 +262,10 @@ export default {
     rating : 4,
     contents : "",
     contentsLength : 300,
+    reviewUpdateDialog: false,
+    reviewUserId : "",
+    reviewId : "",
+    
   }),
   created() {
     this.loadData()
@@ -309,14 +349,147 @@ export default {
         return true
     },
     writeReview() {
-      if(contentRule == true){
+      let form = new FormData()
+      form.append('total_score', this.rating)
+      form.append('store_id', this.$route.query.storeId)
+      form.append('content', this.contents)
+
+      if(this.contentRule() == true){
+        var headers = {
+          withCredentials: true,
+          headers: { 'Authorization': 'jwt '+ this.$cookie.get('token')}
+        }
         
+      http
+        .post('/api/writeReview',form,headers)
+        .then(response => {
+          console.log(response)
+          console.log(response.data)
+          this.loadReviewList()
+          this.reviewDialog = false
+
+        })
+        .catch(err => {
+          if(err.response.data.non_field_errors != undefined){
+            alert("아이디와 비밀번호를 확인해주세요.")
+            this.password = ""
+          }else if(err.response.data.password != undefined){
+            alert("비밀번호를 확인해주세요.")
+            this.password = ""
+          }else{
+            alert("아이디와 비밀번호를 확인해주세요.")
+            this.password = ""
+          }
+      })
       }else{
         alert("300자이하로 작성해주세요.")
       }
     },
+    loadReviewList(){
+      let form = new FormData()
+      form.append('storeId', this.$route.query.storeId)
+
+      http
+        .post('/api/SearchReviewbyStoreId',form)
+        .then(response => {
+          console.log(response)
+          this.reviews = response.data
+
+          this.totalScore = 0
+            this.reviews.forEach((element) => {
+              this.totalScore += element.total_score
+            })
+            this.totalScore /=
+              this.reviews.length == 0 ? 1 : this.reviews.length
+
+            this.$vuetify.goTo('#reviewTitle', { offset: 0 })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    openReviewWindow(userid,content,score,reviewId){
+      if(userid == null || this.$cookie.get('token') == null){
+        alert("수정 불가 합니다.")
+        return;
+      }else{
+        // 리뷰창 띄우기
+        console.log(content)
+        this.contents = content
+        this.rating = score
+        this.reviewUserId = userid
+        this.reviewId = reviewId
+        this.reviewUpdateDialog = true
+      }
+    },
+    updateReview(userid,content,score){
+      let form = new FormData()
+      form.append('total_score', this.rating)
+      form.append('store_id', this.$route.query.storeId)
+      form.append('content', this.contents)
+      form.append('userId', this.reviewUserId)
+      form.append('reviewId', this.reviewId)
+
+      if(this.contentRule() == true){
+        var headers = {
+          withCredentials: true,
+          headers: { 'Authorization': 'jwt '+ this.$cookie.get('token')}
+        }
+      
+      console.log(this.$cookie.get('token'))
+        
+      http
+        .post('/api/updateReview',form,headers)
+        .then(response => {
+          var state = response.data.state
+          if(state == "success"){
+            this.reviewUpdateDialog = false
+            this.loadReviewList()
+
+          }else if(state == "fail"){
+            alert(response.data.message)
+          }
+        })
+        .catch(err => {
+          if(this.$cookie.get('token') == null)
+            alert("다시 로그인해주세요")
+          else
+            alert("서버와 연결이 불안정합니다. 다시 시도해주세요.")
+          
+      })
+      }else{
+        alert("300자이하로 작성해주세요.")
+      }
+    },
+    deleteReview(reviewId){
+      if(this.$cookie.get('token') == null){
+        alert("삭제할 수 없습니다. 로그인 후 시도해보세요.")
+        return;
+      }else{
+        var result = confirm('해당 리뷰를 삭제하겠습니까?');
+        if(result == true){ //삭제 요청 
+          let form = new FormData()
+          form.append('reviewId', reviewId)
+
+          var headers = {
+            withCredentials: true,
+            headers: { 'Authorization': 'jwt '+ this.$cookie.get('token')}
+          }
+
+          http
+            .post('/api/deleteReview',form,headers)
+            .then(response => {
+              console.log(response.data)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        }
+        console.log(result)
+      }
+    },
     test(){
-      console.log("ddd")
+      this.$vuetify.goTo('#reviewTitle', { offset: 0 })
     }
   },
 }
