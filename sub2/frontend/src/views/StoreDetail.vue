@@ -6,20 +6,20 @@
   >
   
     <!-- STORE -->
-    <v-layout wrap mt-5 class="mx-3" md12>
+    <v-layout wrap mt-5 class="mx-3" sm12>
       <!--STORE title-->
-      <v-flex md12>
+      <v-flex sm12 xs12>
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
-          Store<v-btn @click="test">ddddd</v-btn>
+          Store
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
       </v-flex>
       <!-- storeImg -->
-      <v-flex md3 xs12>
+      <v-flex sm3 xs12>
         <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png"></v-img>
       </v-flex>
       <!-- store info -->
-      <v-flex md6 xs12>
+      <v-flex sm6 xs12>
         <v-row style="align-items: center">
           <v-col>
             <b class="font-weight-bold ml-3" style="font-size: 1.8em;">{{
@@ -57,11 +57,11 @@
         </v-simple-table>
       </v-flex>
       <!-- store map -->
-      <v-flex md3>
+      <v-flex sm3 hidden-xs-only>
         <div id="map" style="width:100% ;height:300px; z-index:0"></div>
       </v-flex>
       <!--menu -->
-      <v-flex md12>
+      <v-flex sm12 xs12>
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">Menu</p>
         <v-divider class="mb-5 mt-1"></v-divider>
 
@@ -75,7 +75,7 @@
       </v-flex>
 
       <!--review title-->
-      <v-flex md12 id ="reviewTitle">
+      <v-flex sm12 id ="reviewTitle">
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
           Reveiw ({{ reviews.length }}건) 
           <v-btn text @click="reviewDialog = true"><v-icon color="blue">mdi-pencil</v-icon><b>리뷰작성</b></v-btn>
