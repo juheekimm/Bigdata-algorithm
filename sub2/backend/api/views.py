@@ -152,27 +152,7 @@ def writeReview(request,user=None):
 
     return Response({"ok" : payload['user_id'], })
 
-# @api_view(['POST'])
-# @permission_classes((IsAuthenticated, ))
-# @authentication_classes((JSONWebTokenAuthentication,))
-# def confirmUpdateReview(request,user=None):
-    
-#     #token에서 user_id 추출하기
-#     token = request.headers['Authorization'][4:]
-#     payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
-#     id_token = payload['user_id']
 
-#     total_score = request.POST['total_score']
-#     content = request.POST['content']
-#     store_id = request.POST['store_id']
-
-#     print(total_score+" | "+content+" | "+store_id)
-#     #리뷰 아이디와 tokenId가 같은지 확인
-#     id_user = request.POST['id']
-#     if(id_user == id_token):
-#         return Response({"ok" : "수정가능", })
-#     else:
-#         return Response({"ok" : '수정불가', })
 
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
@@ -233,39 +213,20 @@ def deleteReview(request,user=None):
     #parm
     review_id = request.POST['reviewId']
 
-    #profileID(token)와 리뷰글쓴이ID가 같으지 확인 해야 함.
+    #profileUserId(token)와 리뷰글쓴이ID가 같으지 확인 해야 함.
+    queryset = Review.objects.get(id=review_id)
+    ReviewUserId = int(queryset.user_id)
+    queryset = Profile.objects.get(id=ReviewUserId)
+    profileUserId = int(queryset.user_id)
 
-    queryset = Profile.objects.get(user_id=id_token)
-    queryset_string = serialize('json', queryset)
-    # queryset_json = json.loads(queryset_string)
-    # user_id = queryset_json['pk']
-
-    print(queryset_json)
-
-    # data = Review.objects.get(id=review_id)
-
-    # print(review_id+" sdfsdlfjsdklfjsdkljfklsdjfklsdjf")
-    # #리뷰 아이디와 tokenId가 같은지 확인
-    
-    # if(id_user == id_token):
-    #     ## id_user로 profile Id 찾기
-        
-
-    #     #리뷰쓴 사람과 토큰 보낸 사람이 같은지 다시한번 확인
-    #     if(int(user_id) != int(data.user_id)):
-    #         return Response({"state" : "fail", "message" : "수정 가능한 아이디가 아닙니다.", })
-
-    #     #리뷰 업데이트
-    #     data.content = content
-    #     data.total_score = total_score
-    #     print(timezone.now())
-    #     data.reg_time = timezone.now()
-
-    #     data.save()
-
-    #     return Response({"state" : "success", "message" : "수정에 성공했습니다."})
-    # else:
-    #     return Response({"state" : "fail", "message" : "수정 가능한 아이디가 아닙니다.", })
+    # tokonid와 reivew 글쓴이의 id가 같다.
+    if(id_token == profileUserId):
+        print("ddd")
+        instance = Review.objects.get(id=review_id)
+        instance.delete()
+        return Response({"state" : "success", "message" : "삭제에 성공했습니다.", })
+    else:
+        return Response({"state" : "fail", "message" : "삭제권한이 없습니다.", })
 
 #CRUD 
 class reviewCRUD(APIView):
@@ -366,3 +327,24 @@ class searchNearbyStore(APIView):
         else:
             return False
 
+# @api_view(['POST'])
+# @permission_classes((IsAuthenticated, ))
+# @authentication_classes((JSONWebTokenAuthentication,))
+# def confirmUpdateReview(request,user=None):
+    
+#     #token에서 user_id 추출하기
+#     token = request.headers['Authorization'][4:]
+#     payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
+#     id_token = payload['user_id']
+
+#     total_score = request.POST['total_score']
+#     content = request.POST['content']
+#     store_id = request.POST['store_id']
+
+#     print(total_score+" | "+content+" | "+store_id)
+#     #리뷰 아이디와 tokenId가 같은지 확인
+#     id_user = request.POST['id']
+#     if(id_user == id_token):
+#         return Response({"ok" : "수정가능", })
+#     else:
+#         return Response({"ok" : '수정불가', })
