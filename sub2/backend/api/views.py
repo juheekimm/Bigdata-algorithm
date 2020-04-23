@@ -314,7 +314,7 @@ def query_MySqlDB(query):
     engine = create_engine(URL(
         drivername="mysql",
         username="root",
-        password="aaaa",
+        password="ssafy",
         host="52.79.223.182",
         port="3306",
         database="django_test",
