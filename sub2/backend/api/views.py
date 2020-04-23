@@ -16,6 +16,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 import jwt
 from backend.settings import JWT_AUTH
 from accounts.models import Profile
+from accounts.serializers import ProfileSerializer
 import json
 
 from django.utils import timezone
@@ -70,6 +71,7 @@ class SearchStore(APIView):
         serializer = StoreSerializer(queryset, many=True)
         return Response(serializer.data)
 
+# autoComplete를 위한 REST
 class SearchStroeforComplete(APIView):
  
     def post(self, request):
@@ -111,6 +113,7 @@ class SearchMenubyStoreId(APIView):
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 
+# 상점Id를 이용해서 상점 정보 검색
 class SearchStorebyStoreId(APIView):
     def post(self, request):
         if 'storeId' in request.POST.keys():
@@ -122,7 +125,7 @@ class SearchStorebyStoreId(APIView):
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 
-# 리뷰쓰기
+# 리뷰 쓰기
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
@@ -152,8 +155,7 @@ def writeReview(request,user=None):
 
     return Response({"ok" : payload['user_id'], })
 
-
-
+# 리뷰 수정
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
@@ -199,7 +201,7 @@ def updateReview(request,user=None):
     else:
         return Response({"state" : "fail", "message" : "수정 가능한 아이디가 아닙니다.", })
 
-
+# 리뷰 삭제
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
@@ -228,69 +230,7 @@ def deleteReview(request,user=None):
     else:
         return Response({"state" : "fail", "message" : "삭제권한이 없습니다.", })
 
-#CRUD 
-class reviewCRUD(APIView):
-
-    #Create
-    def post(self, request):
-        ## session의 값과 userId값이 같으지 확인해야함^^^^^^^^
-        if ('user' in request.POST.keys()) and ('store' in request.POST.keys()) and ('content' in request.POST.keys()):
-            user = request.POST['user']
-            store = request.POST['store']
-            content = request.POST['content']
-            
-            store = Store.objects.get(store=store)
-
-            data = Review(user=user,content=content)
-            data.store = store
-            data.save()
-            stat=status.HTTP_200_OK
-        else :
-            stat=status.HTTP_400_BAD_REQUEST
-            
-        return Response({'status': stat})
-
-    #Read store, user 에 따라 읽는다.
-    def get(self, request):
-        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys():
-            condition = request.POST['condition']
-            keyword = request.POST['keyword']
-            if(condition == "store"):
-                queryset = Review.objects.all().filter(store=keyword).select_related()
-            elif(condition == "user"):
-                queryset = Review.objects.all().filter(user=keyword).select_related()
-            serializer = StoreReviewSerializer(queryset, many=True)
-            return Response({'status': status.HTTP_200_OK})
-        else :
-            return Response({'status': status.HTTP_400_BAD_REQUEST})
-    
-    #Update 
-    def put(self,request):
-        ## session 확인
-        try:
-            if 'content' in request.POST.keys() and 'id' in request.POST.keys():
-                id = request.POST["id"]
-                content = request.POST["content"]
-                data =  Review.objects.get(id=id)
-                data.content = content
-                # print("*****************"+id+" "+content)
-                data.save()
-                return Response({'status': status.HTTP_200_OK})
-        except:
-            return Response({'status': status.HTTP_400_BAD_REQUEST})
-
-    #Delete review Id
-    def delete(self, request):
-        ## sessionId와 들어오는 아이디가 같은지 확인해야함.*******
-        try :
-            id = request.POST['id']
-            data = Review.objects.get(id=id)
-            data.save()
-            return Response({'status': status.HTTP_200_OK})
-        except :
-            return Response({'status': status.HTTP_400_BAD_REQUEST})
-
-
+# 위치(경도,위도)를 이용해서 근처(distance) 상점 찾아보기
 class searchNearbyStore(APIView):
     def post(self, request):
 
@@ -326,6 +266,46 @@ class searchNearbyStore(APIView):
             return True
         else:
             return False
+
+# 토큰을 이용해 유저 정보 가져오기
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
+def UserbyToken(request,user=None):
+    
+    #token에서 user_id 추출하기
+    token = request.headers['Authorization'][4:]
+    payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
+    id_token = int(payload['user_id'])
+
+    #user_id로 프로필정보 뽑아내기
+    queryset = Profile.objects.all().filter(user_id=id_token)
+    serializer = ProfileSerializer(queryset, many = True)
+
+    return Response(serializer.data)
+
+
+# 토큰을 이용해 유저가 쓴 리뷰들 가져오기
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
+def UserReviewbyToken(request,user=None):
+    
+    #token에서 user_id 추출하기
+    token = request.headers['Authorization'][4:]
+    payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
+    id_token = int(payload['user_id'])
+
+    #user_id로 프로필id 뽑아내기
+    queryset = Profile.objects.get(user_id=id_token)
+    profileId = queryset.id
+
+    #프로필id로 review찾기
+    queryset = Review.objects.all().filter(user_id=profileId).select_related().order_by('-reg_time')
+    serializer = ReviewStoreSerializer(queryset, many = True)
+
+    return Response(serializer.data)
+
 
 # @api_view(['POST'])
 # @permission_classes((IsAuthenticated, ))

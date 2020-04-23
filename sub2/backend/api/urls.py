@@ -19,6 +19,8 @@ urlpatterns = [
     url('writeReview',views.writeReview),
     url('updateReview',views.updateReview),
     url('deleteReview',views.deleteReview),
+    url('userbyToken',views.UserbyToken),
+    url('UserReviewbyToken',views.UserReviewbyToken),
     # path('searchName/', views.search_storeName.as_view(), name="store"),
     # path('searchStore/', views.serachStore.as_view(), name="store"),
     # path('review/',views.reviewCRUD.as_view(),name="review")
