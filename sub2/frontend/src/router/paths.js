@@ -18,4 +18,9 @@ export default [{
         view: "NearbyStore",
         name: "NearbyStore"
     },
+    {
+        path: "/myPage",
+        view: "MyPage",
+        name: "MyPage"
+    },
 ];
