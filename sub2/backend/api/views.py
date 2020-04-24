@@ -25,6 +25,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from django.db.models import Q
 
 # class SmallPagination(PageNumberPagination):
 #     page_size = 10
@@ -437,8 +438,26 @@ class matrixFactorization(APIView):
             item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
            
             # 이거 int로 안해주면 계속 오류남..ㅜㅜ
-            print(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6])
-            return Response(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"])
+            storeIdList = item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"]
+           
+            print(storeIdList)
+            # print("왜이래")
+
+            # 주석은 나중에 한꺼번에 지울게요 일단은 지우지 말아주세요!
+            # conditions = ""
+            # for storeId in storeIdList:
+            #     print(storeId)
+            #     print(Store.objects.all().filter(id=storeId))
+                # q.add("Q(id=" + str(storeId) + ")", q.OR)
+                # conditions = conditions + " Q(id=" + str(storeId) + ") |"
+            # conditions = conditions[:-2]
+            # print(conditions)
+            # 모델클래스명.objects.all().filter(Q(조건필드1=조건값1) | Q(조건필드2=조건값2)) # or 조건
+            
+            queryset = Store.objects.all().filter(id__in=storeIdList.tolist())
+            serializer = StoreSerializer(queryset, many = True)
+            return Response(serializer.data)
+            # return Response(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"])
 
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
