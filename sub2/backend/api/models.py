@@ -3,6 +3,23 @@ from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import Profile
 import datetime
+from django.utils import timezone
+
+class Store_menu(models.Model):
+    id = models.AutoField(primary_key=True)
+    store_name = models.CharField(max_length=50)
+    branch = models.TextField(null=True)
+    area = models.CharField(max_length=50, null=True)
+    tel = models.CharField(max_length=20, null=True)
+    address = models.CharField(max_length=200, null=True)
+    latitude = models.FloatField(max_length=10, null=True)
+    longitude = models.FloatField(max_length=10, null=True)
+    category = models.CharField(max_length=200, null=True)
+    menu = models.CharField(max_length=3000, null=True)
+
+    @property
+    def category_list(self):
+        return self.category.split("|") if self.category else []
 
 class Store(models.Model):
     id = models.AutoField(primary_key=True)

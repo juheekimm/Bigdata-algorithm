@@ -51,7 +51,8 @@ class Command(BaseCommand):
 
         data = self._load_dataframes()
         data=data.head(20000)
-
+        print("-data--------------------------------------------------------------")
+        print(data['overview'])
         tfidf = TfidfVectorizer(stop_words='english')
         data['overview'] = data['overview'].fillna('')
 
@@ -61,6 +62,8 @@ class Command(BaseCommand):
 
         # 코사인 유사도 측정
         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+        print("코사인 유사도")
+        print(cosine_sim)
 
         indices = pd.Series(data.index, index=data['title']).drop_duplicates()
         print(indices.head())

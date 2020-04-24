@@ -13,10 +13,10 @@ class MenuSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = '__all__'
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,7 +31,7 @@ class StoreNameSerializer(serializers.ModelSerializer):
         ]
 
 class ReviewUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    # user = UserSerializer(read_only=True)
     class Meta:
         model = Review
         # fidels = ("reviewId","userId","storeId","contents")
