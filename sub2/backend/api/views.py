@@ -1,14 +1,11 @@
 from .models import *
 from .serializers import *
-from api import models, serializers
-from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import Http404
+
 from rest_framework import status
 from haversine import haversine
-from django.core.serializers import serialize
+from django.core import serializers as coreSerialize
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +15,10 @@ from backend.settings import JWT_AUTH
 from accounts.models import Profile
 from accounts.serializers import ProfileSerializer
 import json
+from django.http import Http404,JsonResponse,HttpResponse
+
 from django.utils import timezone
+from django.db.models import Avg
 
 # add juheekim
 from sqlalchemy import create_engine
@@ -26,21 +26,21 @@ from sqlalchemy.engine.url import URL
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-class SmallPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 50
+# class SmallPagination(PageNumberPagination):
+#     page_size = 10
+#     page_size_query_param = "page_size"
+#     max_page_size = 50
 
-class StoreViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.StoreSerializer
-    pagination_class = SmallPagination
+# class StoreViewSet(viewsets.ModelViewSet):
+#     serializer_class = serializers.StoreSerializer
+#     pagination_class = SmallPagination
 
-    def get_queryset(self):
-        name = self.request.query_params.get("name", "")
-        queryset = (
-            models.Store.objects.all().filter(store_name__contains=name).order_by("id")
-        )
-        return queryset
+#     def get_queryset(self):
+#         name = self.request.query_params.get("name", "")
+#         queryset = (
+#             models.Store.objects.all().filter(store_name__contains=name).order_by("id")
+#         )
+#         return queryset
 
 class AllStoreList(APIView):
     def get(self, request, format=None):
@@ -50,30 +50,63 @@ class AllStoreList(APIView):
 
 class SearchStore(APIView):
 
-    def get_query(self,condition,keyword):
-        try :
-            if(condition == 'storeId'):
-                return Store.objects.all().filter(id=keyword)
-            elif(condition == 'storeName'):
-                return Store.objects.all().filter(store_name__contains=keyword)
-            elif(condition == 'storeAddress'):
-                return Store.objects.all().filter(address__contains=keyword)
-            else:
-                raise Http404
-        except :
-            raise Http404
+    # def get_query(self,condition,keyword):
+    #     try :
+    #         if(condition == 'storeId'):
+    #             return Store.objects.all().filter(id=keyword)
+    #         elif(condition == 'storeName'):
+
+    #             return Store.objects.all().filter(store_name__contains=keyword)
+    #         elif(condition == 'storeAddress'):
+    #             return Store.objects.all().filter(address__contains=keyword)
+    #         else:
+    #             raise Http404
+    #     except :
+    #         raise Http404
  
     def post(self, request):
-        if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys() and 'size' in request.POST.keys():
-            condition = request.POST['condition']
-            keyword = request.POST['keyword']
-            count = int(request.POST['count'])
-            size = int(request.POST['size'])
-            queryset = self.get_query(condition,keyword)[(count*size):(count*size)+size]
-        else :
-            queryset = Store.objects.all()[:10]
-        serializer = StoreSerializer(queryset, many=True)
-        return Response(serializer.data)
+        keyword = request.POST['keyword']
+        condition = request.POST['condition']
+        keyword = request.POST['keyword']
+        count = int(request.POST['count'])
+        size = int(request.POST['size'])
+        storeQueryset = Store.objects.filter(store_name__contains=keyword)
+        stores = list(storeQueryset)
+        jsonObject = []
+        idx = 0
+
+        for ttt in stores:
+            obj = {}
+            obj["id"] = ttt.id
+            obj["store_name"] = ttt.store_name
+            obj["branch"] = ttt.branch
+            obj["area"] = ttt.area
+            obj["tel"] = ttt.tel
+            obj["address"] = ttt.address
+            obj["latitude"] = ttt.latitude
+            obj["longitude"] = ttt.longitude
+            obj["category"] = ttt.category.split('|')
+
+            ReviewQueryset = Review.objects.filter(store_id=ttt.id).values("store").annotate(total_score=Avg("total_score"))
+            review_list = list(ReviewQueryset)
+            obj["total_score"] =  0 if len(review_list) == 0 else review_list[0]["total_score"]
+            jsonObject.append(obj)
+
+        data = type(json.dumps(jsonObject))
+        
+        return JsonResponse({"storeList" :jsonObject}, json_dumps_params = {'ensure_ascii': True})
+        # return Response({"serializer":"d"})
+
+        # if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys() and 'size' in request.POST.keys():
+        #     condition = request.POST['condition']
+        #     keyword = request.POST['keyword']
+        #     count = int(request.POST['count'])
+        #     size = int(request.POST['size'])
+        #     queryset = self.get_query(condition,keyword)[(count*size):(count*size)+size]
+        # else :
+        #     queryset = Store.objects.all()[:10]
+        # serializer = StoreSerializer(queryset, many=True)
+        # return Response(serializer.data)
 
 # autoComplete를 위한 REST
 class SearchStroeforComplete(APIView):
