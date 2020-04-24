@@ -26,6 +26,7 @@ from sqlalchemy.engine.url import URL
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
+from . import store_recommendation
 # class SmallPagination(PageNumberPagination):
 #     page_size = 10
 #     page_size_query_param = "page_size"
@@ -337,11 +338,30 @@ def UserReviewbyToken(request,user=None):
     queryset = Profile.objects.get(user_id=id_token)
     profileId = queryset.id
 
-    #프로필id로 review찾기
+    #프로필id로 review 찾기`
     queryset = Review.objects.all().filter(user_id=profileId).select_related().order_by('-reg_time')
     serializer = ReviewStoreSerializer(queryset, many = True)
 
     return Response(serializer.data)
+
+
+# 메뉴가 유사한 지점 추천
+# @api_view(['GET'])
+# def recommendedByMenu(store_id, dis):
+#     data=store_recommendation.recommendation_menu_distance(store_id,dis)
+#     print(store_id+" "+dis)
+#     print(data)
+#
+#     serializer = StoreSerializer(data, many=True)
+#     return Response(serializer.data)
+class recommendedByMenu(APIView):
+    def get(self, request, store_id, dis):
+        data=store_recommendation.recommendation_menu_distance(store_id,dis)
+        print(store_id+" "+dis)
+        print(data)
+
+        serializer = StoreSerializer(data, many=True)
+        return Response(serializer.data)
 
 # add juheekim
 def conn_create():
