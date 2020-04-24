@@ -23,6 +23,8 @@ from django.utils import timezone
 # add juheekim
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
 
 class SmallPagination(PageNumberPagination):
     page_size = 10
@@ -309,8 +311,8 @@ def UserReviewbyToken(request,user=None):
     return Response(serializer.data)
 
 # add juheekim
-def query_MySqlDB(query):
-    # sqlalchemy engine
+def conn_create():
+     # sqlalchemy engine
     engine = create_engine(URL(
         drivername="mysql",
         username="root",
@@ -322,10 +324,33 @@ def query_MySqlDB(query):
     ))
 
     conn = engine.connect()
+    return conn
+
+def query_MySqlDB(query):
+    # sqlalchemy engine
+    # engine = create_engine(URL(
+    #     drivername="mysql",
+    #     username="root",
+    #     password="ssafy",
+    #     host="52.79.223.182",
+    #     port="3306",
+    #     database="django_test",
+    #     query = {'charset': 'utf8mb4'}
+    # ))
+
+    # conn = engine.connect()
+    conn = conn_create()
     result = conn.execute(query)
     print(result)
 
     return result
+
+
+def queryPandas(query) :
+    conn = conn_create()
+    generator_df = pd.read_sql(sql=query, con=conn)
+                    
+    return generator_df
 
 # 사용자의 연령, 성별 정보를 이용하여 추천음식점 검색
 # 같은 연령대, 성별을 가진 사람들이 높게 평가한 음식점 리스트를 반환
@@ -352,6 +377,36 @@ class storeRecobyUserInfo(APIView):
                     + " and avg(total_score) >= 4.5"
                 + " order by count desc, avg desc"
                 + " limit 5;"))
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+class matrixFactorization(APIView):
+    def post(self, request):
+        req = json.loads(request.body)
+        keys = req.keys()
+        if ('address' in keys and 'store_id' in keys):
+            address = req['address']
+            store_id = req['store_id']
+            print(type(store_id))
+
+            user_data = queryPandas("select id as user_id, gender, age from accounts_profile")
+            review_data = queryPandas("select user_id, store_id, total_score from api_review")
+            store_data = queryPandas("select id as store_id, address from api_store where address like '" + address + "%%'")
+
+            review_store_data = pd.merge(review_data, store_data, on="store_id")        #store 이름, 아이디, 주소 조인
+            user_review_rating = pd.merge(user_data, review_store_data, on="user_id")   #user_id, 성별, 나이, stroe 이름, 아이디, 주소 조인
+
+            review_user_rating = user_review_rating.pivot_table("total_score", index="store_id", columns="user_id")
+            user_review_rating = user_review_rating.pivot_table("total_score", index="user_id", columns="store_id")
+            review_user_rating.fillna(0, inplace = True)
+
+            item_based_collabor = cosine_similarity(review_user_rating) 
+            item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
+           
+            # 이거 int로 안해주면 계속 오류남..ㅜㅜ
+            print(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6])
+            return Response(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"])
+
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 

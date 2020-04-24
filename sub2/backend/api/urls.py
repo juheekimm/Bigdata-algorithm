@@ -24,6 +24,9 @@ urlpatterns = [
 
     # add juheekim
     url('storeIdbyUserInfo',views.storeRecobyUserInfo.as_view(),name="storeRecobyUserInfo"),
+    url('matrixFactorization',views.matrixFactorization.as_view(),name="matrixFactorization"),
+
+
     # path('searchName/', views.search_storeName.as_view(), name="store"),
     # path('searchStore/', views.serachStore.as_view(), name="store"),
     # path('review/',views.reviewCRUD.as_view(),name="review")

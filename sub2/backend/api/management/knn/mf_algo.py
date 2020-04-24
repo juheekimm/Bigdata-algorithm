@@ -46,11 +46,11 @@ user_review_rating = user_review_rating.pivot_table("total_score", index="user_i
 review_user_rating.fillna(0, inplace = True)
 # print(review_user_rating.head(5))
 
-item_based_collabor = cosine_similarity(review_user_rating)
-# print(item_based_collabor)
+item_based_collabor = cosine_similarity(review_user_rating) 
 
 item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
 # print(item_based_collabor.head())
+print(item_based_collabor)
 
 def get_item_based_collabor(store_name):
     return item_based_collabor[store_name].sort_values(ascending=False)[:6]
