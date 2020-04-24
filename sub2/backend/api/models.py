@@ -63,7 +63,7 @@ class Review(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     total_score = models.IntegerField(default=0)
     content = models.TextField(null=True)
-    reg_time = models.DateTimeField(default=datetime.datetime.now())
+    reg_time = models.DateTimeField(default=timezone.now)
 
     # SET
     # SQL_SAFE_UPDATES = 0;
@@ -74,8 +74,11 @@ class Review(models.Model):
     # reg_time = now()
     # where
     # reg_time = date('1970-01-01');
+
     def __str__(self):
         return [self.id, self.store, self.user, self.total_score]
+    # def __str__(self):
+    #     return str(self.id) + " "  + str(self.store) + " "  + str(self.user) + " "  + str(self.total_score)
 
 # class Profile(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE)
