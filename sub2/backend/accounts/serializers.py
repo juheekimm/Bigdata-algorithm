@@ -14,7 +14,7 @@ from rest_framework import status
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
-        fields = ('id','nickname', 'gender', 'age')
+        fields = ('id', 'nickname', 'gender', 'age')
 
 
 class CustomRegistrationSerializer(RegisterSerializer):
