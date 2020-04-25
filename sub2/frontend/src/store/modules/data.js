@@ -13,7 +13,8 @@ const state = {
         address: "",
         lat: 0.0,
         lng: 0.0,
-        categories: []
+        categories: [],
+        total_score: 0,
     },
     token: "",
     user: {},

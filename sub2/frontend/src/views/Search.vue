@@ -92,7 +92,7 @@
             dense
             solo
             max-width ="100px"
-            hide-details = "false"
+            
         ></v-select>
            </v-col>
           
@@ -115,11 +115,11 @@
                       style="height: 100%; word-break:break-all"
                     >
                       <b
-                        v-for="(category, index) in result.category_list"
+                        v-for="(cate, index) in result.category"
                         :key="index"
                         class="title"
                       >
-                        #{{ category }}
+                        #{{ cate }}
                       </b>
                     </div>
                   </v-expand-transition>
@@ -133,11 +133,13 @@
                     large
                     right
                     top
-                    
                     style = "z-index:0"
                   >
                     <v-icon>mdi-map-outline</v-icon>
                   </v-btn>
+                  <div>
+                    <v-rating class="pl-0" v-model="result.total_score" color="yellow lighten-1" hover size="20" background-color="grey lighten-2" dense readonly></v-rating>
+                  </div>
                   <div class="title font-weight-light orange--text">
                     {{ result.store_name }}
                   </div>
@@ -284,6 +286,8 @@ export default {
       form.append('keyword', keyword)
       form.append('count',this.storeSearchPage)
       form.append('size',12)
+
+      console.log("storeSearchPage : " + this.storeSearchPage)
       
       this.loading = true
       http
@@ -292,15 +296,15 @@ export default {
           // console.log(response.data)
           this.loading = false
           if (response.status == 200) {
-            console.log(response.data)
-            this.setStoreSearchList(response.data)
+            console.log(response.data.storeList)
+            this.setStoreSearchList(response.data.storeList)
             this.incrementStoreSearchPage()
           } else {
             this.setStoreSearchList([])
           }
         })
         .catch(err => {
-          resolve([])
+          console.log(err)
         })
     },
     doMouseEnterStore(store) {
