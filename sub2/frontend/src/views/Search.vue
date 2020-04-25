@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container v-scroll="onScroll">
+    <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
-      <v-btn @click="test">test2</v-btn>
       <v-flex md10 xs12>
         <autocomplete
           :search="search"
@@ -9,18 +9,18 @@
           aria-label="Search for a country"
           style="z-index: 10;"
           @submit="onSubmit"
-        >
+          >
           <template
             #default="{
-        rootProps,
-        inputProps,
-        inputListeners,
-        resultListProps,
-        resultListListeners,
-        results,
-        resultProps
-      }"
-          >
+              rootProps,
+              inputProps,
+              inputListeners,
+              resultListProps,
+              resultListListeners,
+              results,
+              resultProps
+            }"
+            >
             <div v-bind="rootProps">
               <custom-input
                 v-bind="inputProps"
@@ -82,20 +82,14 @@
         </autocomplete>
       </v-flex>
     </v-layout>
+
+    <!-- storeList + map -->
     <v-layout wrap mt-5>
+      <!-- storeList -->
       <v-flex md9 xs12>
         <v-layout justify-end md12>
           <v-col class="d-flex py-0" cols="3" sm="3">
-            <v-select
-            :items="sortCondition"
-            label="정렬 기준"
-            dense
-            solo
-            max-width ="100px"
-            
-        ></v-select>
-           </v-col>
-          
+          </v-col>
         </v-layout>
         <v-layout wrap>
           <v-flex
@@ -166,9 +160,16 @@
         </v-layout>
       </v-flex>
       
+      <!-- map -->
       <v-flex md3 class="d-none d-md-block">
-        <v-col>
-          <div id="map" style="width:100% ;height:400px; z-index:0"></div>
+        <v-col cols=12>
+          <div 
+            id="map" 
+            style="width:80% ;height:400px; z-index:0"
+            v-bind:style="{
+              top: mapPostion + 'px'
+            }"
+          ></div>
         </v-col>
       </v-flex>
     </v-layout>
@@ -178,11 +179,11 @@
       hide-overlay
       persistent
       width="300"
-    >
+      >
       <v-card
         color="primary"
         dark
-      >
+        >
         <v-card-text>
           Please stand by
           <v-progress-linear
@@ -193,7 +194,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <infinite-loading v-if="true" @infinite="infiniteHandler"></infinite-loading>
+    <infinite-loading v-if="storeSearchList.length != 0 && loadingState == true" @infinite="infiniteHandler"></infinite-loading>
   </v-container>
 </template>
 
@@ -221,6 +222,8 @@ export default {
     map: "",
     loading : false,
     sortCondition : ["이름순","별점순","리뷰많은순"],
+    loadingState : true,
+    mapPostion : 0,
   }),
   created() {
   },
@@ -279,6 +282,10 @@ export default {
       } else {
         keyword = this.keyword
       }
+
+      this.loadingState = true
+
+      // this.loadingState.reset()
       
       this.setStoreSearchPage(0)
       let form = new FormData()
@@ -302,6 +309,7 @@ export default {
           } else {
             this.setStoreSearchList([])
           }
+
         })
         .catch(err => {
           console.log(err)
@@ -367,13 +375,15 @@ export default {
       http
         .post('api/searchStore', form)
         .then(response => {
-          tmpList = response.data
+          console.log(response.data.storeList)
+          tmpList = response.data.storeList
           if(tmpList.length > 0) {
             this.incrementStoreSearchPage()
             this.addStoreSearchList(tmpList)
             $state.loaded();
           }else{
-            $state.complete();
+            this.loadingState = false
+            // $state.complete();
           }
         })
         .catch(err => {
@@ -384,6 +394,16 @@ export default {
       console.log(this.storeSearchPage)
       console.log("dfsdfsdf")
       this.loading = true
+    },
+    onScroll(){
+      var scroll = window.pageYOffset;
+      var fix = 0;
+      var move = 0;
+      if (scroll > fix) {
+        this.mapPostion = move + scroll - fix;
+      } else {
+        this.mapPostion = move;
+      }
     }
   }
 }
