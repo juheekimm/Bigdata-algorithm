@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from haversine import haversine
 from django.core import serializers as coreSerialize
+from django.core.serializers import serialize
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -60,12 +61,14 @@ class SearchStore(APIView):
     #         raise Http404
  
     def post(self, request):
-        keyword = request.POST['keyword']
         condition = request.POST['condition']
         keyword = request.POST['keyword']
         count = int(request.POST['count'])
         size = int(request.POST['size'])
-        storeQueryset = Store.objects.filter(store_name__contains=keyword)
+
+        storeQueryset = Store.objects.all().filter(store_name__contains=keyword)
+        storeQueryset = storeQueryset[(count*size):(count*size)+size]
+        
         stores = list(storeQueryset)
         jsonObject = []
         idx = 0

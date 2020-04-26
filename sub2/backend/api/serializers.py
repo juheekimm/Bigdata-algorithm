@@ -32,7 +32,7 @@ class StoreNameSerializer(serializers.ModelSerializer):
 
 # 이렇게 해야 되는 건데 왜...
 class ReviewUserSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Review
         # fidels = ("reviewId","userId","storeId","contents")
