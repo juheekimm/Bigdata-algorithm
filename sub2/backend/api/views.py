@@ -432,18 +432,6 @@ def conn_create():
     return conn
 
 def query_MySqlDB(query):
-    # sqlalchemy engine
-    # engine = create_engine(URL(
-    #     drivername="mysql",
-    #     username="root",
-    #     password="ssafy",
-    #     host="52.79.223.182",
-    #     port="3306",
-    #     database="django_test",
-    #     query = {'charset': 'utf8mb4'}
-    # ))
-
-    # conn = engine.connect()
     conn = conn_create()
     result = conn.execute(query)
     print(result)
@@ -470,7 +458,7 @@ class storeRecobyUserInfo(APIView):
             print(age)
             gender = req['gender']
 
-            return Response(query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+            queryset = query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
                 + " from api_review r"
                 + " join accounts_profile p"
                 + " on r.user_id = p.id" 
@@ -481,7 +469,21 @@ class storeRecobyUserInfo(APIView):
                 + " having count(store_id) >= 2"
                     + " and avg(total_score) >= 4.5"
                 + " order by count desc, avg desc"
-                + " limit 5;"))
+                + " limit 5;")
+            print(queryset)
+            return queryset
+            # return Response(query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+            #     + " from api_review r"
+            #     + " join accounts_profile p"
+            #     + " on r.user_id = p.id" 
+            #         + " and p.age <= (year(now()) - " + str(int(age)) + ")"
+            #         + " and p.age > (year(now()) - " + str(int(age) + 9) + ")"
+            #         + " and p.gender = '" + str(gender) + "'"
+            #     + " group by store_id"
+            #     + " having count(store_id) >= 2"
+            #         + " and avg(total_score) >= 4.5"
+            #     + " order by count desc, avg desc"
+            #     + " limit 5;"))
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 
@@ -489,10 +491,19 @@ class matrixFactorization(APIView):
     def post(self, request):
         req = json.loads(request.body)
         keys = req.keys()
-        if ('address' in keys and 'store_id' in keys):
-            address = req['address']
+        if ('store_id' in keys):
             store_id = req['store_id']
-            print(type(store_id))
+            address = req['address']
+
+            queryset = Store.objects.all().filter(id=store_id).values('address')
+            queryset_string = serialize('json', queryset)
+            queryset_json = json.loads(queryset_string)
+            address = queryset_json[0]['address']
+            # print(list(queryset)[0].address)
+           
+            print("안녕1")
+            # print((list(queryset)))
+
 
             user_data = queryPandas("select id as user_id, gender, age from accounts_profile")
             review_data = queryPandas("select user_id, store_id, total_score from api_review")
