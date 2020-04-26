@@ -3,6 +3,7 @@ import pandas as pd
 from django.core.management.base import BaseCommand
 from backend import settings
 from api import models
+from accounts import models
 
 
 class Command(BaseCommand):
@@ -26,6 +27,7 @@ class Command(BaseCommand):
 
         dataframes = self._load_dataframes()
 
+
         # print("[*] Initializing stores...")
         # models.Store.objects.all().delete()
         # stores = dataframes["stores"]
@@ -44,8 +46,8 @@ class Command(BaseCommand):
         #     for store in stores.itertuples()
         # ]
         # models.Store.objects.bulk_create(stores_bulk)
-        #
-        #
+
+
         # # menus info
         # print("[*] Initializing menus...")
         # models.Menu.objects.all().delete()
@@ -62,11 +64,10 @@ class Command(BaseCommand):
         #     for menu in menus.itertuples()
         # ]
         # models.Menu.objects.bulk_create(menus_bulk)
-        #
-        # # users info
+
+        # users info
         # print("[*] Initializing users...")
         # models.User.objects.all().delete()
-        #
         # users = dataframes["users"]
         # users_bulk = [
         #     models.User(
@@ -77,26 +78,37 @@ class Command(BaseCommand):
         #     for user in users.itertuples()
         # ]
         # models.User.objects.bulk_create(users_bulk)
-
-        # reviews info
-        print("[*] Initializing reviews...")
-        models.Review.objects.all().delete()
-
-        reviews = dataframes["reviews"]
-        reviews_bulk = [
-            models.Review(
-                id=review.id,
-                store_id=review.store,
-                user_id=review.user,
-                total_score=review.score,
-                content=review.content,
-                reg_time=review.reg_time
-
-
-            )
-            for review in reviews.itertuples()
-        ]
-        models.Review.objects.bulk_create(reviews_bulk)
+        # models.Profile.objects.all().delete()
+        # profile = dataframes["users"]
+        # profile_bulk = [
+        #     models.Profile(
+        #         id=user.id,
+        #         gender=user.gender,
+        #         age=user.age
+        #     )
+        #     for user in profile.itertuples()
+        # ]
+        # models.Profile.objects.bulk_create(profile_bulk)
+        #
+        # # reviews info
+        # print("[*] Initializing reviews...")
+        # models.Review.objects.all().delete()
+        #
+        # reviews = dataframes["reviews"]
+        # reviews_bulk = [
+        #     models.Review(
+        #         # id=review.id,
+        #         store_id=review.store,
+        #         user_id=review.user,
+        #         total_score=review.score,
+        #         content=review.content,
+        #         reg_time=review.reg_time
+        #
+        #
+        #     )
+        #     for review in reviews.itertuples()
+        # ]
+        # models.Review.objects.bulk_create(reviews_bulk)
 
         print("[+] Done")
 

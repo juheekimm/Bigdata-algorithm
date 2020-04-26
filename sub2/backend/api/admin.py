@@ -5,5 +5,5 @@ from api import models
 
 admin.site.register(models.Store)
 admin.site.register(models.Menu)
-admin.site.register(models.User)
+# admin.site.register(models.User)
 admin.site.register(models.Review)
