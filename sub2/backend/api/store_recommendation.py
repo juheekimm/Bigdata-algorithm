@@ -21,10 +21,10 @@ from sklearn.metrics.pairwise import linear_kernel
 #     print(output)
 
 # 상점id를 받고 거리를 받아 반경 {dis}km안에 있는 메뉴 유사 음식점 추천
-def recommendation_menu_distance(self, store_id, dis):
+def recommendation_menu_distance(store_id, dis):
     print("[*] Loading store data...")
     query_store = "SELECT * FROM django_test.api_store_menu where id="+str(store_id)
-    store = self.query_MySqlDB(query_store)
+    store = query_MySqlDB(query_store)
     print(store.iloc[0].store_name)
     store_name=store.iloc[0].store_name
     store_lat=str(store.iloc[0].latitude)
@@ -34,7 +34,7 @@ def recommendation_menu_distance(self, store_id, dis):
     query_distance="SELECT *,(6371*acos(cos(radians("+store_lat+"))*cos(radians(latitude))*cos(radians(longitude) " \
                    "-radians("+store_lon+"))+sin(radians("+store_lat+"))*sin(radians(latitude)))) " \
                    "AS distance FROM api_store_menu HAVING distance <= "+str(dis)+" ORDER BY distance"
-    data = self.query_MySqlDB(query_distance)
+    data = query_MySqlDB(query_distance)
     print("-data--------------------------------------------------------------")
     print(data)
     tfidf = TfidfVectorizer()
@@ -71,10 +71,10 @@ def recommendation_menu_distance(self, store_id, dis):
 
 
 # 상점id를 받고 거리를 받아 반경 {dis}km안에 있는 카테고리 유사 음식점 추천
-def recommendation_category_distance(self, store_id, dis):
+def recommendation_category_distance(store_id, dis):
     print("[*] Loading store data...")
     query_store = "SELECT * FROM django_test.api_store where id="+str(store_id)
-    store = self.query_MySqlDB(query_store)
+    store = query_MySqlDB(query_store)
     print(store.iloc[0].store_name)
     store_name=store.iloc[0].store_name
     store_lat=str(store.iloc[0].latitude)
@@ -84,7 +84,7 @@ def recommendation_category_distance(self, store_id, dis):
     query_distance="SELECT *,(6371*acos(cos(radians("+store_lat+"))*cos(radians(latitude))*cos(radians(longitude) " \
                    "-radians("+store_lon+"))+sin(radians("+store_lat+"))*sin(radians(latitude)))) " \
                    "AS distance FROM api_store HAVING distance <= "+str(dis)+" ORDER BY distance"
-    data = self.query_MySqlDB(query_distance)
+    data = query_MySqlDB(query_distance)
     print("-data--------------------------------------------------------------")
     print(data)
     tfidf = TfidfVectorizer()
@@ -105,7 +105,7 @@ def recommendation_category_distance(self, store_id, dis):
 
     # 우선 쿼리로 가져온 모든 상점에 대한 유사도를 구한다.
     sim_scores = list(enumerate(cosine_sim[idx]))
-    print("우선 쿼리로 가져온 모든 상점에 대한 유사도를 구한다.")
+    # print("우선 쿼리로 가져온 모든 상점에 대한 유사도를 구한다.")
     # print(sim_scores)
     # 유사도에 따라 상점들을 정렬한다.
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
@@ -120,7 +120,7 @@ def recommendation_category_distance(self, store_id, dis):
     return data.iloc[store_indices]
 
 
-def query_MySqlDB(self,query):
+def query_MySqlDB(query):
     # sqlalchemy engine
     engine = create_engine(URL(
         drivername="mysql",

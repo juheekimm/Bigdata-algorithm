@@ -25,6 +25,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from . import models
 
 from . import store_recommendation
 # class SmallPagination(PageNumberPagination):
@@ -348,20 +349,71 @@ def UserReviewbyToken(request,user=None):
 # 메뉴가 유사한 지점 추천
 # @api_view(['GET'])
 # def recommendedByMenu(store_id, dis):
-#     data=store_recommendation.recommendation_menu_distance(store_id,dis)
 #     print(store_id+" "+dis)
+#
+#     data=store_recommendation.recommendation_menu_distance(store_id,dis)
 #     print(data)
 #
 #     serializer = StoreSerializer(data, many=True)
 #     return Response(serializer.data)
-class recommendedByMenu(APIView):
-    def get(self, request, store_id, dis):
-        data=store_recommendation.recommendation_menu_distance(store_id,dis)
-        print(store_id+" "+dis)
-        print(data)
 
-        serializer = StoreSerializer(data, many=True)
+class recommendedByMenu(APIView):
+    def get(self,request, store_id,dis):
+        print(str(store_id)+" "+str(dis))
+
+        datas=store_recommendation.recommendation_menu_distance(store_id,dis)
+        print(datas)
+        stores= [
+                models.Store(
+                    id=store.id,
+                    store_name=store.store_name,
+                    branch=store.branch,
+                    area=store.area,
+                    tel=store.tel,
+                    address=store.address,
+                    latitude=store.latitude,
+                    longitude=store.longitude,
+                    category=store.category,
+                )
+                for store in datas.itertuples()
+            ]
+
+        serializer = StoreSerializer(stores, many=True)
         return Response(serializer.data)
+
+class recommendedByCategory(APIView):
+    def get(self,request, store_id,dis):
+        print(str(store_id)+" "+str(dis))
+
+        datas=store_recommendation.recommendation_category_distance(store_id,dis)
+        print(datas)
+        stores= [
+                models.Store(
+                    id=store.id,
+                    store_name=store.store_name,
+                    branch=store.branch,
+                    area=store.area,
+                    tel=store.tel,
+                    address=store.address,
+                    latitude=store.latitude,
+                    longitude=store.longitude,
+                    category=store.category,
+                )
+                for store in datas.itertuples()
+            ]
+
+        serializer = StoreSerializer(stores, many=True)
+        return Response(serializer.data)
+# class recommendedByMenu(APIView):
+#     def post(self, request):
+#         store_id=request.POST['store_id']
+#         dis=request.POST['dis']
+#         data=store_recommendation.recommendation_menu_distance(store_id,dis)
+#         print(store_id+" "+dis)
+#         print(data)
+#
+#         serializer = StoreSerializer(data, many=True)
+#         return Response(serializer.data)
 
 # add juheekim
 def conn_create():
