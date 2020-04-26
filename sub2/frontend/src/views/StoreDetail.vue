@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="mt-5"
+    class="mt-5 px-5"
     fill-height
     style="background-color: white; padding-top: 1.5em;"
   >
@@ -59,6 +59,86 @@
       <!-- store map -->
       <v-flex sm3 hidden-xs-only>
         <div id="map" style="width:100% ;height:300px; z-index:0"></div>
+      </v-flex>
+      <!--recommand List -->
+      <v-flex sm12 xs12>
+        <span class="ma-0 font-weight-light" style="font-size: 1.8em; ">추천리스트</span>
+        <!-- 추천리스트 기준 -->
+        <div hidden-xs-only style="display: inline-block;">
+          <span>(</span>
+          <span>
+            <v-select
+              :items="recommandkeywordList"
+              v-model="recommandkeyword"
+              class="ma-0 pa-0 px-2"
+              style="display: inline-block; width:120px"
+              hide-details
+              dense
+              v-on:change="changeRecommand"
+            ></v-select>
+          </span>
+          <span>기준으로 반경</span>
+          <span>
+            <v-select
+              :items="recommandDistanceList"
+              v-model="recommandDistance"
+              class="px-2"
+              style="display: inline-block; width:50px"
+              hide-details
+              dense
+              v-on:change="changeRecommand"
+              ></v-select>
+          </span>
+          <span>km의 추천맛집을 검색합니다.)</span>
+        </div>
+        
+        <v-divider class="mb-5 mt-1"></v-divider>
+        <!-- 추천 리스트 -->
+        <v-tabs
+          background-color="transparent"
+          center-active
+          height="auto"
+          show-arrows
+          >
+          <v-tabs-slider color="transparent"></v-tabs-slider>
+          <v-tab v-for="(result,index) in recommandList" :key="index+'ab'" class="pa-0">
+            <div>
+              <v-hover v-slot:default="{ hover }" >
+                <v-card color="grey lighten-4" class="ma-4" :to="'/storeDetail?storeId='+result.id" width="200px">
+                  <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out cyan lighten-1 v-card--reveal black--text "
+                        style="height: 100%; word-break:break-all"
+                        >
+                        <b
+                          v-for="(cate, index) in result.category.split('|')"
+                          :key="index"
+                          class="title"
+                          >
+                          #{{ cate }}
+                        </b>
+                      </div>
+                    </v-expand-transition>
+                  </v-img>
+                  <v-card-text class="pa-1" style="position: relative;">
+                    <div class="title font-weight-light orange--text">
+                      {{ result.store_name }}
+                    </div>
+                    <div
+                      class="font-weight-light grey--text caption"
+                      style="text-align: left;"
+                      >
+                        {{ result.area }}
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-hover>
+            </div>
+          </v-tab>
+          
+        </v-tabs>
       </v-flex>
       <!--menu -->
       <v-flex sm12 xs12>
@@ -239,6 +319,27 @@
       
     
     </v-dialog>
+    <!-- loadingdialog -->
+    <v-dialog
+      v-model="loading"
+      hide-overlay
+      persistent
+      width="300"
+      >
+      <v-card
+        color="primary"
+        dark
+        >
+        <v-card-text>
+          Please stand by
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -256,7 +357,6 @@ export default {
     menus: [],
     reviews: [],
     totalScore: 0,
-    isLoading: true,
     curYear: 0,
     reviewDialog : false,
     rating : 4,
@@ -265,6 +365,13 @@ export default {
     reviewUpdateDialog: false,
     reviewUserId : "",
     reviewId : "",
+    recommandkeyword : "메뉴",
+    recommandkeywordList : ["메뉴","카테고리"],
+    recommandDistance : 1,
+    recommandDistanceList : [1,2],
+    recommandList : [],
+    loading : false,
+    tabIndex : 0,
     
   }),
   created() {
@@ -276,7 +383,7 @@ export default {
   },
   methods: {
     loadData() {
-      this.isLoading = true
+      this.loading = true
 
       let form = new FormData()
       form.append('storeId', this.$route.query.storeId)
@@ -284,20 +391,24 @@ export default {
       const requestStore = http.post('/api/SearchStorebyStoreId', form)
       const requestMenu = http.post('/api/SearchMenubyStoreId', form)
       const requestReview = http.post('/api/SearchReviewbyStoreId', form)
+      const requestRecommandList = http.get('/api/recommendedByMenu/'+this.$route.query.storeId+"_"+this.recommandDistance)
+      // const requestRecommandList = http.get('/api/recommendedByMenu/149_1')
 
       axios
-        .all([requestStore, requestMenu, requestReview])
+        .all([requestStore, requestMenu, requestReview, requestRecommandList])
         .then(
           axios.spread((...responses) => {
             const responseStore = responses[0]
             const responseMenu = responses[1]
             const responesReview = responses[2]
+            const responseRecommand = responses[3]
+
+            console.log(responseRecommand.data)
 
             this.store = responseStore.data[0]
             this.menus = responseMenu.data
             this.reviews = responesReview.data
-
-            console.log(this.reviews)
+            this.recommandList = responseRecommand.data
 
             this.totalScore = 0
             this.reviews.forEach((element) => {
@@ -306,7 +417,7 @@ export default {
             this.totalScore /=
               this.reviews.length == 0 ? 1 : this.reviews.length
 
-            this.isLoading = false
+            this.loading = false
 
             this.drawMap()
           })
@@ -493,6 +604,40 @@ export default {
         }
       }
     },
+    changeRecommand(){
+      console.log("changeRecommand")
+      var key = this.recommandkeyword
+      var dis = this.recommandDistance
+      var storeId = this.$route.query.storeId
+      this.loading = true
+      if(key == "메뉴"){
+        http
+          .get('/api/recommendedByMenu/'+storeId+"_"+dis)
+          .then(response => {
+            this.recommandList = response.data
+            this.loading = false
+            this.tabIndex = 0
+          })
+          .catch(err => {
+            this.loading = false
+            alert("데이터 로딩에 실패했습니다. 다시 시도해주세요")
+          })
+      }else if(key == "카테고리"){
+        http
+          .get('/api/recommendedByCategory/'+storeId+"_"+dis)
+          .then(response => {
+            this.recommandList = response.data
+            this.loading = false
+            this.tabIndex = 0
+          })
+          .catch(err => {
+            this.loading = false
+            alert("데이터 로딩에 실패했습니다. 다시 시도해주세요")
+          })
+      }else{ 
+        this.loading = false
+      }
+    },
     test(){
       this.$vuetify.goTo('#reviewTitle', { offset: 0 })
     }
@@ -508,5 +653,14 @@ export default {
   margin-right:1em;
   padding-left: 1em;
   padding-right: 1em;
+}
+
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: 0.7;
+  position: absolute;
+  width: 100%;
 }
 </style>

@@ -2,7 +2,7 @@
   <v-app id="app">
     <toolbar />
     <drawer />
-    <route-view />
+    <route-view :key="$route.fullPath" />
     <go-top />
   </v-app>
 </template>

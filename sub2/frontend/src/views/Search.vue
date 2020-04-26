@@ -119,18 +119,6 @@
                   </v-expand-transition>
                 </v-img>
                 <v-card-text class="pt-6" style="position: relative;">
-                  <v-btn
-                    absolute
-                    color="pink"
-                    class="white--text"
-                    fab
-                    large
-                    right
-                    top
-                    style = "z-index:0"
-                  >
-                    <v-icon>mdi-map-outline</v-icon>
-                  </v-btn>
                   <div>
                     <v-rating class="pl-0" v-model="result.total_score" color="yellow lighten-1" hover size="20" background-color="grey lighten-2" dense readonly></v-rating>
                   </div>
