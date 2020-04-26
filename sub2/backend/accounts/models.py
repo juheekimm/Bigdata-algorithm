@@ -11,7 +11,6 @@ class Profile(models.Model):
     nickname = models.CharField(max_length=5, null=True, blank=True)
     gender = models.CharField(max_length=5, null=True, blank=True)
     age = models.IntegerField(default=0)
-    # nickname = models.TextField(max_length=10)
 
 
 # 토큰추가

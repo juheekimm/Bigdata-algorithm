@@ -84,3 +84,8 @@ class Review(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE)
 #     gender = models.CharField(max_length=5, null=True, blank=True)
 #     age = models.IntegerField()
+
+# class StoreReco(models.Model):
+#     count = models.AutoField(primary_key=True)
+#     avg = models.ForeignKey(Store, on_delete=models.CASCADE)
+#     store_id = models.ForeignKey(Profile, on_delete=models.CASCADE)

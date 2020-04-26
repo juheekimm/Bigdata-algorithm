@@ -21,7 +21,14 @@ from django.http import Http404,JsonResponse,HttpResponse
 from django.utils import timezone
 from django.db.models import Avg
 
+# add juheekim
+from sqlalchemy import create_engine
+from sqlalchemy.engine.url import URL
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from . import models
 
+from . import store_recommendation
 # class SmallPagination(PageNumberPagination):
 #     page_size = 10
 #     page_size_query_param = "page_size"
@@ -335,12 +342,181 @@ def UserReviewbyToken(request,user=None):
     queryset = Profile.objects.get(user_id=id_token)
     profileId = queryset.id
 
-    #프로필id로 review찾기
+    #프로필id로 review 찾기`
     queryset = Review.objects.all().filter(user_id=profileId).select_related().order_by('-reg_time')
     serializer = ReviewStoreSerializer(queryset, many = True)
 
     return Response(serializer.data)
 
+
+# 메뉴가 유사한 지점 추천
+# @api_view(['GET'])
+# def recommendedByMenu(store_id, dis):
+#     print(store_id+" "+dis)
+#
+#     data=store_recommendation.recommendation_menu_distance(store_id,dis)
+#     print(data)
+#
+#     serializer = StoreSerializer(data, many=True)
+#     return Response(serializer.data)
+
+class recommendedByMenu(APIView):
+    def get(self,request, store_id,dis):
+        print(str(store_id)+" "+str(dis))
+
+        datas=store_recommendation.recommendation_menu_distance(store_id,dis)
+        print(datas)
+        stores= [
+                models.Store(
+                    id=store.id,
+                    store_name=store.store_name,
+                    branch=store.branch,
+                    area=store.area,
+                    tel=store.tel,
+                    address=store.address,
+                    latitude=store.latitude,
+                    longitude=store.longitude,
+                    category=store.category,
+                )
+                for store in datas.itertuples()
+            ]
+
+        serializer = StoreSerializer(stores, many=True)
+        return Response(serializer.data)
+
+class recommendedByCategory(APIView):
+    def get(self,request, store_id,dis):
+        print(str(store_id)+" "+str(dis))
+
+        datas=store_recommendation.recommendation_category_distance(store_id,dis)
+        print(datas)
+        stores= [
+                models.Store(
+                    id=store.id,
+                    store_name=store.store_name,
+                    branch=store.branch,
+                    area=store.area,
+                    tel=store.tel,
+                    address=store.address,
+                    latitude=store.latitude,
+                    longitude=store.longitude,
+                    category=store.category,
+                )
+                for store in datas.itertuples()
+            ]
+
+        serializer = StoreSerializer(stores, many=True)
+        return Response(serializer.data)
+# class recommendedByMenu(APIView):
+#     def post(self, request):
+#         store_id=request.POST['store_id']
+#         dis=request.POST['dis']
+#         data=store_recommendation.recommendation_menu_distance(store_id,dis)
+#         print(store_id+" "+dis)
+#         print(data)
+#
+#         serializer = StoreSerializer(data, many=True)
+#         return Response(serializer.data)
+
+# add juheekim
+def conn_create():
+     # sqlalchemy engine
+    engine = create_engine(URL(
+        drivername="mysql",
+        username="root",
+        password="ssafy",
+        host="52.79.223.182",
+        port="3306",
+        database="django_test",
+        query = {'charset': 'utf8mb4'}
+    ))
+
+    conn = engine.connect()
+    return conn
+
+def query_MySqlDB(query):
+    # sqlalchemy engine
+    # engine = create_engine(URL(
+    #     drivername="mysql",
+    #     username="root",
+    #     password="ssafy",
+    #     host="52.79.223.182",
+    #     port="3306",
+    #     database="django_test",
+    #     query = {'charset': 'utf8mb4'}
+    # ))
+
+    # conn = engine.connect()
+    conn = conn_create()
+    result = conn.execute(query)
+    print(result)
+
+    return result
+
+
+def queryPandas(query) :
+    conn = conn_create()
+    generator_df = pd.read_sql(sql=query, con=conn)
+                    
+    return generator_df
+
+# 사용자의 연령, 성별 정보를 이용하여 추천음식점 검색
+# 같은 연령대, 성별을 가진 사람들이 높게 평가한 음식점 리스트를 반환
+class storeRecobyUserInfo(APIView):
+    def post(self, request):
+        req = json.loads(request.body)
+        keys = req.keys()
+        print('age' in keys)
+        if ('age' in keys and 'gender' in keys):
+        
+            age = int((timezone.now().year - int(req['age']) + 1) / 10) * 10
+            print(age)
+            gender = req['gender']
+
+            return Response(query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+                + " from api_review r"
+                + " join accounts_profile p"
+                + " on r.user_id = p.id" 
+                    + " and p.age <= (year(now()) - " + str(int(age)) + ")"
+                    + " and p.age > (year(now()) - " + str(int(age) + 9) + ")"
+                    + " and p.gender = '" + str(gender) + "'"
+                + " group by store_id"
+                + " having count(store_id) >= 2"
+                    + " and avg(total_score) >= 4.5"
+                + " order by count desc, avg desc"
+                + " limit 5;"))
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+class matrixFactorization(APIView):
+    def post(self, request):
+        req = json.loads(request.body)
+        keys = req.keys()
+        if ('address' in keys and 'store_id' in keys):
+            address = req['address']
+            store_id = req['store_id']
+            print(type(store_id))
+
+            user_data = queryPandas("select id as user_id, gender, age from accounts_profile")
+            review_data = queryPandas("select user_id, store_id, total_score from api_review")
+            store_data = queryPandas("select id as store_id, address from api_store where address like '" + address + "%%'")
+
+            review_store_data = pd.merge(review_data, store_data, on="store_id")        #store 이름, 아이디, 주소 조인
+            user_review_rating = pd.merge(user_data, review_store_data, on="user_id")   #user_id, 성별, 나이, stroe 이름, 아이디, 주소 조인
+
+            review_user_rating = user_review_rating.pivot_table("total_score", index="store_id", columns="user_id")
+            user_review_rating = user_review_rating.pivot_table("total_score", index="user_id", columns="store_id")
+            review_user_rating.fillna(0, inplace = True)
+
+            item_based_collabor = cosine_similarity(review_user_rating) 
+            item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
+           
+            # 이거 int로 안해주면 계속 오류남..ㅜㅜ
+            print(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6])
+            return Response(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"])
+
+        else :
+            return Response({'status': status.HTTP_400_BAD_REQUEST})
 
 # @api_view(['POST'])
 # @permission_classes((IsAuthenticated, ))
