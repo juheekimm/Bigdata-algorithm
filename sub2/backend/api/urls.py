@@ -26,6 +26,10 @@ urlpatterns = [
     url('storeIdbyUserInfo',views.storeRecobyUserInfo.as_view(),name="storeRecobyUserInfo"),
     url('matrixFactorization',views.matrixFactorization.as_view(),name="matrixFactorization"),
 
+    path('recommendedByMenu/<int:store_id>_<int:dis>',views.recommendedByMenu.as_view(),name="recommendedByMenu"),
+    path('recommendedByCategory/<int:store_id>_<int:dis>', views.recommendedByCategory.as_view(), name="recommendedByCategory"),
+
+    # url('recommendedByCategory',name="recommendedByCategory"),
 
     # path('searchName/', views.search_storeName.as_view(), name="store"),
     # path('searchStore/', views.serachStore.as_view(), name="store"),
