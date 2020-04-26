@@ -1,6 +1,13 @@
 <template>
-  <v-container>
-    <div id="map" style="width:100%;height:350px;"></div>
+  <v-container fill-height="">
+    <v-layout wrap mt-5 class="mx-3" >
+      <v-flex sm9>
+        <div id="map" style="width:100%;height:100%;"></div>
+      </v-flex>
+      <v-flex sm3>
+      </v-flex>
+    </v-layout>
+    
   </v-container>
 </template>
 

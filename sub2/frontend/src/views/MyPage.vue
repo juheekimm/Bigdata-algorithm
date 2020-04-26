@@ -77,22 +77,26 @@
 
                   <div>
                     <v-card-title
-                      class="font-weight-bold"
+                      class="font-weight-bold pb-0"
                       v-text="review.store.store_name"
-                      name=""
+                      name="vct"
                       style="font-size: 1.3em;"
                     ></v-card-title>
+                    <div
+                      name="vas"
+                      class="font-weight-light grey--text caption pl-5"
+                      v-text="review.store.area"
+                    ></div>
                     <v-rating class="pl-3 pr-5" v-model="review.total_score" color="yellow lighten-1" hover size="35" background-color="grey lighten-2" dense readonly></v-rating>
-                    <p class="pl-5 pr-5" v-if="review.store.category != ''">
-                      <i
-                        v-for="(category, index) in review.store.category.split('|', 2 )"
-                        :key="index+'tt'"
-                        style="font-size: 0.8em; color: #6e6ee5;"
-                      >
-                      #{{category}}
-                      </i>
-                    </p>
-                    
+                      <p class="pl-5 pr-5" v-if="review.store.category != ''">
+                        <i
+                          v-for="(category, index) in review.store.category.split('|', 2 )"
+                          :key="index+'tt'"
+                          style="font-size: 0.8em; color: #6e6ee5;"
+                        >
+                        #{{category}}
+                        </i>
+                      </p>
                   </div>
 
                   <v-divider vertical inset></v-divider>

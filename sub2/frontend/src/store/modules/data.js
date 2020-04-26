@@ -3,7 +3,7 @@ import api from "../../api";
 // initial state
 const state = {
     storeSearchList: [],
-    storeSearchPage: "1",
+    storeSearchPage: "0",
     store: {
         id: "",
         name: "",
@@ -13,11 +13,12 @@ const state = {
         address: "",
         lat: 0.0,
         lng: 0.0,
-        categories: []
+        categories: [],
+        total_score: 0,
     },
     token: "",
     user: {},
-    count: 1,
+    count: 0,
 };
 
 // actions
@@ -54,8 +55,11 @@ const mutations = {
     addStoreSearchList(state, stores) {
         state.storeSearchList = state.storeSearchList.concat(stores);
     },
-    setStoreSearchPage(state, url) {
-        state.storeSearchPage = new URL(url).searchParams.get("page");
+    setStoreSearchPage(state, payload) {
+        state.storeSearchPage = payload
+    },
+    incrementStoreSearchPage(state) {
+        state.storeSearchPage++
     },
     setToken(state, payload) {
         state.token = payload

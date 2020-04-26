@@ -14,7 +14,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="px-0">
-                <v-text-field type="password" placeholder="Password" solo hide-details v-model="password"></v-text-field>
+                <v-text-field type="password" placeholder="Password" solo hide-details v-model="password" v-on:keyup.enter="login"></v-text-field>
               </v-col>
             </v-row>
             <v-row>

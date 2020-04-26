@@ -1,5 +1,6 @@
 <template>
-  <v-container>
+  <v-container v-scroll="onScroll">
+    <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
       <v-flex md10 xs12>
         <autocomplete
@@ -8,18 +9,18 @@
           aria-label="Search for a country"
           style="z-index: 10;"
           @submit="onSubmit"
-        >
+          >
           <template
             #default="{
-        rootProps,
-        inputProps,
-        inputListeners,
-        resultListProps,
-        resultListListeners,
-        results,
-        resultProps
-      }"
-          >
+              rootProps,
+              inputProps,
+              inputListeners,
+              resultListProps,
+              resultListListeners,
+              results,
+              resultProps
+            }"
+            >
             <div v-bind="rootProps">
               <custom-input
                 v-bind="inputProps"
@@ -81,45 +82,25 @@
         </autocomplete>
       </v-flex>
     </v-layout>
+
+    <!-- storeList + map -->
     <v-layout wrap mt-5>
+      <!-- storeList -->
       <v-flex md9 xs12>
         <v-layout justify-end md12>
-          <v-btn text @click.stop="filterDialog = true">filter</v-btn>
-          <v-dialog v-model="filterDialog" max-width="300">
-            <v-card>
-              <v-card-title>
-                <span class="headline">Filter</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" class="pb-0">
-                      정렬순
-                      <v-radio-group v-model="orderStandard" column>
-                        <v-radio label="이름순" value="name"></v-radio>
-                        <v-radio label="리뷰순" value="review"></v-radio>
-                        <v-radio label="평점순" value="score"></v-radio>
-                      </v-radio-group>
-                    </v-col>
-                  </v-row>
-                  <v-layout justify-end>
-                    <v-btn color="primary">적용하기</v-btn>
-                  </v-layout>
-                </v-container>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
+          <v-col class="d-flex py-0" cols="3" sm="3">
+          </v-col>
         </v-layout>
         <v-layout wrap>
           <v-flex
             lg4
             md6
             xs12
-            v-for="(result, index) in storeList"
-            :key="index"
-          >
+            v-for="(result,index) in storeSearchList"
+            :key="index+'ss'"
+            >
             <v-hover v-slot:default="{ hover }">
-              <v-card color="grey lighten-4" class="ma-5" :to="'/storeDetail?storeId='+result.id" @mouseenter="doMouseEnterStore(result)">
+              <v-card color="grey lighten-4" class="ma-4" :to="'/storeDetail?storeId='+result.id" @mouseenter="doMouseEnterStore(result)">
                 <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
                   <v-expand-transition>
                     <div
@@ -128,29 +109,19 @@
                       style="height: 100%; word-break:break-all"
                     >
                       <b
-                        v-for="(category, index) in result.category_list"
+                        v-for="(cate, index) in result.category"
                         :key="index"
                         class="title"
                       >
-                        #{{ category }}
+                        #{{ cate }}
                       </b>
                     </div>
                   </v-expand-transition>
                 </v-img>
                 <v-card-text class="pt-6" style="position: relative;">
-                  <v-btn
-                    absolute
-                    color="pink"
-                    class="white--text"
-                    fab
-                    large
-                    right
-                    top
-                    
-                    style = "z-index:0"
-                  >
-                    <v-icon>mdi-map-outline</v-icon>
-                  </v-btn>
+                  <div>
+                    <v-rating class="pl-0" v-model="result.total_score" color="yellow lighten-1" hover size="20" background-color="grey lighten-2" dense readonly></v-rating>
+                  </div>
                   <div class="title font-weight-light orange--text">
                     {{ result.store_name }}
                   </div>
@@ -176,19 +147,48 @@
           </v-flex>
         </v-layout>
       </v-flex>
+      
+      <!-- map -->
       <v-flex md3 class="d-none d-md-block">
-        <v-col>
-          <div id="map" style="width:100% ;height:400px; z-index:0"></div>
+        <v-col cols=12>
+          <div 
+            id="map" 
+            style="width:80% ;height:400px; z-index:0"
+            v-bind:style="{
+              top: mapPostion + 'px'
+            }"
+          ></div>
         </v-col>
       </v-flex>
     </v-layout>
-    <infinite-loading v-if="isFirst==false" @infinite="infiniteHandler"></infinite-loading>
+    <!-- loadingdialog -->
+    <v-dialog
+      v-model="loading"
+      hide-overlay
+      persistent
+      width="300"
+      >
+      <v-card
+        color="primary"
+        dark
+        >
+        <v-card-text>
+          Please stand by
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <infinite-loading v-if="storeSearchList.length != 0 && loadingState == true" @infinite="infiniteHandler"></infinite-loading>
   </v-container>
 </template>
 
 <script>
 import Autocomplete from '@trevoreyre/autocomplete-vue'
-import { mapState, mapActions } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import CustomInput from '@/components/CustomInput'
 import http from '../http-common'
 import InfiniteLoading from 'vue-infinite-loading';
@@ -208,21 +208,25 @@ export default {
     orderStandard: 'name',
     storeList: [],
     map: "",
-    isFirst : true,
+    loading : false,
+    sortCondition : ["이름순","별점순","리뷰많은순"],
+    loadingState : true,
+    mapPostion : 0,
   }),
   created() {
-    this.isFirst = true
   },
   mounted() {
     window.kakao && window.kakao.maps ? this.initMap() : this.addScript()
   },
   computed: {
+    ...mapState("data", ["storeSearchList","storeSearchPage"]),
     noResults() {
       return this.value && this.results.length === 0
     }
   },
 
   methods: {
+    ...mapMutations("data", ["setStoreSearchList","addStoreSearchList","setStoreSearchPage","incrementStoreSearchPage"]),
     handleFocus() {
       this.focused = true
     },
@@ -266,29 +270,37 @@ export default {
       } else {
         keyword = this.keyword
       }
-      this.count = 0;
+
+      this.loadingState = true
+
+      // this.loadingState.reset()
+      
+      this.setStoreSearchPage(0)
       let form = new FormData()
       form.append('condition', 'storeName')
       form.append('keyword', keyword)
-      form.append('count',this.count)
+      form.append('count',this.storeSearchPage)
       form.append('size',12)
-      
 
+      console.log("storeSearchPage : " + this.storeSearchPage)
+      
+      this.loading = true
       http
         .post('api/searchStore', form)
         .then(response => {
           // console.log(response.data)
+          this.loading = false
           if (response.status == 200) {
-            console.log(response.data)
-            this.storeList = response.data
-            this.count += 1
-            this.isFirst = false
+            console.log(response.data.storeList)
+            this.setStoreSearchList(response.data.storeList)
+            this.incrementStoreSearchPage()
           } else {
-            this.storeList = []
+            this.setStoreSearchList([])
           }
+
         })
         .catch(err => {
-          resolve([])
+          console.log(err)
         })
     },
     doMouseEnterStore(store) {
@@ -344,25 +356,42 @@ export default {
       let form = new FormData()
       form.append('condition', 'storeName')
       form.append('keyword', this.keyword)
-      form.append('count',this.count)
+      form.append('count',this.storeSearchPage)
       form.append('size',12)
 
       var tmpList = [];
       http
         .post('api/searchStore', form)
         .then(response => {
-          tmpList = response.data
+          console.log(response.data.storeList)
+          tmpList = response.data.storeList
           if(tmpList.length > 0) {
-            this.count += 1;
-            this.storeList.push(...tmpList)
+            this.incrementStoreSearchPage()
+            this.addStoreSearchList(tmpList)
             $state.loaded();
           }else{
-            $state.complete();
+            this.loadingState = false
+            // $state.complete();
           }
         })
         .catch(err => {
           console.log(err)
         })
+    },
+    test(){
+      console.log(this.storeSearchPage)
+      console.log("dfsdfsdf")
+      this.loading = true
+    },
+    onScroll(){
+      var scroll = window.pageYOffset;
+      var fix = 0;
+      var move = 0;
+      if (scroll > fix) {
+        this.mapPostion = move + scroll - fix;
+      } else {
+        this.mapPostion = move;
+      }
     }
   }
 }
@@ -401,5 +430,19 @@ input {
   opacity: 0.7;
   position: absolute;
   width: 100%;
+}
+
+.loading-dialog{
+  background-color : #303030
+}
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-item {
+  display: inline-block;
 }
 </style>
