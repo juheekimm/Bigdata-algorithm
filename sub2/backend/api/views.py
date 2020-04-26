@@ -435,18 +435,6 @@ def conn_create():
     return conn
 
 def query_MySqlDB(query):
-    # sqlalchemy engine
-    # engine = create_engine(URL(
-    #     drivername="mysql",
-    #     username="root",
-    #     password="ssafy",
-    #     host="52.79.223.182",
-    #     port="3306",
-    #     database="django_test",
-    #     query = {'charset': 'utf8mb4'}
-    # ))
-
-    # conn = engine.connect()
     conn = conn_create()
     result = conn.execute(query)
     print(result)
@@ -470,10 +458,10 @@ class storeRecobyUserInfo(APIView):
         if ('age' in keys and 'gender' in keys):
         
             age = int((timezone.now().year - int(req['age']) + 1) / 10) * 10
-            print(age)
+            # print(age)
             gender = req['gender']
 
-            return Response(query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+            queryset = query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
                 + " from api_review r"
                 + " join accounts_profile p"
                 + " on r.user_id = p.id" 
@@ -484,18 +472,26 @@ class storeRecobyUserInfo(APIView):
                 + " having count(store_id) >= 2"
                     + " and avg(total_score) >= 4.5"
                 + " order by count desc, avg desc"
-                + " limit 5;"))
+                + " limit 5;")
+            print(queryset)
+            return queryset
+           
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
 
+# store_id 를 입력하면, 같은 지역 내에서 해당 음식점을 방문한 사람들이 높게 평가한 음식점을 평점순으로 추천해줌(5개)
 class matrixFactorization(APIView):
     def post(self, request):
         req = json.loads(request.body)
         keys = req.keys()
-        if ('address' in keys and 'store_id' in keys):
-            address = req['address']
+        if ('store_id' in keys):
             store_id = req['store_id']
-            print(type(store_id))
+           
+            queryset = Store.objects.all().filter(id=store_id)
+            queryset_string = serialize('json', queryset)
+            queryset_json = json.loads(queryset_string)
+            address = queryset_json[0]["fields"]["address"]
+            address = address[0:address.find(" ", address.find(" ") + 1)]
 
             user_data = queryPandas("select id as user_id, gender, age from accounts_profile")
             review_data = queryPandas("select user_id, store_id, total_score from api_review")
@@ -511,9 +507,12 @@ class matrixFactorization(APIView):
             item_based_collabor = cosine_similarity(review_user_rating) 
             item_based_collabor = pd.DataFrame(data = item_based_collabor, index = review_user_rating.index, columns=review_user_rating.index)
            
-            # 이거 int로 안해주면 계속 오류남..ㅜㅜ
-            print(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6])
-            return Response(item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"])
+            # 이거 int로 안해주면 오류남!
+            storeIdList = item_based_collabor[int(store_id)].sort_values(ascending=False)[1:6].reset_index()["store_id"]
+            
+            queryset = Store.objects.all().filter(id__in=storeIdList.tolist())
+            serializer = StoreSerializer(queryset, many = True)
+            return Response(serializer.data)
 
         else :
             return Response({'status': status.HTTP_400_BAD_REQUEST})
