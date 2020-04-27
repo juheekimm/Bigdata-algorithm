@@ -446,7 +446,6 @@ def queryPandas(query) :
 
 # 사용자의 연령, 성별 정보를 이용하여 추천음식점 검색
 # 같은 연령대, 성별을 가진 사람들이 높게 평가한 음식점 리스트를 반환
-
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
@@ -476,11 +475,21 @@ def storeRecobytToken(request,user=None):
             + " and avg(total_score) >= 4.5"
         + " order by count desc, avg desc"
         + " limit 5;")
-
     print(queryset)
-    return Response(queryset)
-# else :
-    # return Response({'status': status.HTTP_400_BAD_REQUEST})
+
+    # d, a = {}, []
+    storeIdList = []
+    for row in queryset:
+        for column, value in row.items():
+            # d = {**d, **{column: value}}
+            if column == 'store_id':
+                storeIdList.append(value)
+        # a.append(d)
+
+    queryset = Store.objects.all().filter(id__in=storeIdList)
+    serializer = StoreSerializer(queryset, many = True)
+
+    return Response(serializer.data)
 
 # store_id 를 입력하면, 같은 지역 내에서 해당 음식점을 방문한 사람들이 높게 평가한 음식점을 평점순으로 추천해줌(5개)
 class matrixFactorization(APIView):
