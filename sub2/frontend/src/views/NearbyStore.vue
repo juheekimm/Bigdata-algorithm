@@ -24,28 +24,42 @@
             상점 리스트
             <v-divider>
             </v-divider>
-            <v-hover
-              v-slot:default="{ hover }"
-              open-delay="50"
-              v-for="(store, index) in storeList"
-              :key="index+'store'"
-            >
-              <v-card
-                flat
-                :color=" hover ? '#B2CCFF' : '#EAEAEA'"
-                class="ma-1 px-3"
-                @mouseenter="enterStoreCard(index)"
-                @mouseleave="leaveStoreCard(index)"
-                :to="'/storeDetail?storeId='+store.id"
+            
+            <v-container fill-height class="px-0">
+              <v-list
+                style="max-height: 400px; width:100%"
+                class="overflow-y-auto"
               >
-                <v-card-text class="subtitle-1 font-weight-bold pa-0 pt-1">
-                  {{store.store_name}}
-                </v-card-text>
-                <v-card-text v-for="(cate, index) in store.category.split('|')" :key="index" class="pa-0 pb-1">
-                  #{{ cate }}
-                </v-card-text>
-              </v-card>
-            </v-hover>
+                <v-list-item 
+                  v-for="(store, index) in storeList"
+                  :key="index+'store'"
+                  class="pa-0"
+                  >
+                  <v-hover
+                    v-slot:default="{ hover }"
+                    open-delay="50"
+                    
+                  >
+                    <v-card
+                      flat
+                      :color=" hover ? '#B2CCFF' : '#EAEAEA'"
+                      class="ma-1 px-3"
+                      @mouseenter="enterStoreCard(index)"
+                      @mouseleave="leaveStoreCard(index)"
+                      :to="'/storeDetail?storeId='+store.id"
+                      style="width:100%"
+                    >
+                      <v-card-text class="subtitle-1 font-weight-bold pa-0 pt-1">
+                        {{store.store_name}}
+                      </v-card-text>
+                      <v-card-text v-for="(cate, index) in store.category.split('|')" :key="index" class="pa-0 pb-1">
+                        #{{ cate }}
+                      </v-card-text>
+                    </v-card>
+                  </v-hover>
+                </v-list-item>
+              </v-list>
+            </v-container>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -178,7 +192,7 @@ export default {
           this.storeList = response.data
           this.addMarkers()
           this.addCircle(curLat,curLng)
-          this.addCurDot(curLat,curLng)
+          this.addCurDot(curLat,currLng)
         })
         .catch(err => {
           console.log(err)
