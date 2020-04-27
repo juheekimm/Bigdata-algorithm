@@ -450,7 +450,7 @@ def queryPandas(query) :
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
-def storeRecobyUserInfo(request,user=None):
+def storeRecobytToken(request,user=None):
     
     #token에서 user_id 추출하기
     token = request.headers['Authorization'][4:]
@@ -460,19 +460,9 @@ def storeRecobyUserInfo(request,user=None):
     queryset = Profile.objects.all().filter(user_id=user_id)
     queryset_string = serialize('json', queryset)
     queryset_json = json.loads(queryset_string)
-    age = queryset_json[0]["age"]
-    gender = queryset_json[0]["gender"]
-
-# class storeRecobyUserInfo(APIView):
-    # def post(self, request):
-    # req = json.loads(request.body)
-    # keys = req.keys()
-    # print('age' in keys)
-    # if ('age' in keys and 'gender' in keys):
-    
-    # age = int((timezone.now().year - int(req['age']) + 1) / 10) * 10
-    # print(age)
-    # gender = req['gender']
+    age = queryset_json[0]["fields"]["age"]
+    age = int((timezone.now().year - int(age) + 1) / 10) * 10
+    gender = queryset_json[0]["fields"]["gender"]
 
     queryset = query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
         + " from api_review r"
@@ -486,8 +476,9 @@ def storeRecobyUserInfo(request,user=None):
             + " and avg(total_score) >= 4.5"
         + " order by count desc, avg desc"
         + " limit 5;")
+
     print(queryset)
-    return queryset
+    return Response(queryset)
 # else :
     # return Response({'status': status.HTTP_400_BAD_REQUEST})
 
