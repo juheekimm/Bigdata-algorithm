@@ -430,7 +430,6 @@ def conn_create():
         database="django_test",
         query = {'charset': 'utf8mb4'}
     ))
-
     conn = engine.connect()
     return conn
 
@@ -438,46 +437,50 @@ def query_MySqlDB(query):
     conn = conn_create()
     result = conn.execute(query)
     print(result)
-
     return result
-
 
 def queryPandas(query) :
     conn = conn_create()
     generator_df = pd.read_sql(sql=query, con=conn)
-                    
     return generator_df
 
 # 사용자의 연령, 성별 정보를 이용하여 추천음식점 검색
 # 같은 연령대, 성별을 가진 사람들이 높게 평가한 음식점 리스트를 반환
-class storeRecobyUserInfo(APIView):
-    def post(self, request):
-        req = json.loads(request.body)
-        keys = req.keys()
-        print('age' in keys)
-        if ('age' in keys and 'gender' in keys):
-        
-            age = int((timezone.now().year - int(req['age']) + 1) / 10) * 10
-            # print(age)
-            gender = req['gender']
 
-            queryset = query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
-                + " from api_review r"
-                + " join accounts_profile p"
-                + " on r.user_id = p.id" 
-                    + " and p.age <= (year(now()) - " + str(int(age)) + ")"
-                    + " and p.age > (year(now()) - " + str(int(age) + 9) + ")"
-                    + " and p.gender = '" + str(gender) + "'"
-                + " group by store_id"
-                + " having count(store_id) >= 2"
-                    + " and avg(total_score) >= 4.5"
-                + " order by count desc, avg desc"
-                + " limit 5;")
-            print(queryset)
-            return queryset
-           
-        else :
-            return Response({'status': status.HTTP_400_BAD_REQUEST})
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
+def storeRecobytToken(request,user=None):
+    
+    #token에서 user_id 추출하기
+    token = request.headers['Authorization'][4:]
+    payload = jwt.decode(token, JWT_AUTH['JWT_SECRET_KEY'], JWT_AUTH['JWT_ALGORITHM'])
+    user_id = payload['user_id']
+
+    queryset = Profile.objects.all().filter(user_id=user_id)
+    queryset_string = serialize('json', queryset)
+    queryset_json = json.loads(queryset_string)
+    age = queryset_json[0]["fields"]["age"]
+    age = int((timezone.now().year - int(age) + 1) / 10) * 10
+    gender = queryset_json[0]["fields"]["gender"]
+
+    queryset = query_MySqlDB("select count(store_id) count, avg(total_score) avg, store_id"
+        + " from api_review r"
+        + " join accounts_profile p"
+        + " on r.user_id = p.id" 
+            + " and p.age <= (year(now()) - " + str(int(age)) + ")"
+            + " and p.age > (year(now()) - " + str(int(age) + 9) + ")"
+            + " and p.gender = '" + str(gender) + "'"
+        + " group by store_id"
+        + " having count(store_id) >= 2"
+            + " and avg(total_score) >= 4.5"
+        + " order by count desc, avg desc"
+        + " limit 5;")
+
+    print(queryset)
+    return Response(queryset)
+# else :
+    # return Response({'status': status.HTTP_400_BAD_REQUEST})
 
 # store_id 를 입력하면, 같은 지역 내에서 해당 음식점을 방문한 사람들이 높게 평가한 음식점을 평점순으로 추천해줌(5개)
 class matrixFactorization(APIView):
