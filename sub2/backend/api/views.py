@@ -80,7 +80,7 @@ class SearchStore(APIView):
         jsonObject = []
         idx = 0
 
-        for ttt in stores:
+        for ttt in stores:            
             obj = {}
             obj["id"] = ttt.id
             obj["store_name"] = ttt.store_name
@@ -290,8 +290,8 @@ class searchNearbyStore(APIView):
                 + str(curla) +") ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians("
                 + str(curlo) +") ) + sin( radians("
                 + str(curla) +") ) * sin( radians( latitude ) ) ) ) as distance from api_store Having distance <"
-                + str(mile) +";")
-            serializer = serializer = StoreSerializer(queryset, many = True)
+                + str(mile) +" limit 10;")
+            serializer = StoreSerializer(queryset, many = True)
 
             return Response(serializer.data)
         else :
