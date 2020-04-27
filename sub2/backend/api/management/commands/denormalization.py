@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
 
     def _initialize(self):
-        # models.Store_menu.objects.all().delete()
+        models.Store_menu.objects.all().delete()
 
         query_store="SELECT * FROM django_test.api_store where id="
         # query_menu="SELECT * FROM django_test.api_menu where id between 1 and 50000"
@@ -29,6 +29,7 @@ class Command(BaseCommand):
         # query_menu="SELECT * FROM django_test.api_menu where id between 1200001 and 1500000"
 
         query_menu="SELECT * FROM django_test.api_menu where id between 1500001 and 1651857"
+        query_menu="SELECT * FROM django_test.api_menu"
 
 
         engine = create_engine(URL(

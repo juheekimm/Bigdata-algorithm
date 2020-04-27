@@ -360,50 +360,58 @@ def UserReviewbyToken(request,user=None):
 class recommendedByMenu(APIView):
     def get(self,request, store_id,dis):
         print(str(store_id)+" "+str(dis))
+        try:
+            datas=store_recommendation.recommendation_menu_distance(store_id,dis)
+            print(datas)
+            stores= [
+                    models.Store(
+                        id=store.id,
+                        store_name=store.store_name,
+                        branch=store.branch,
+                        area=store.area,
+                        tel=store.tel,
+                        address=store.address,
+                        latitude=store.latitude,
+                        longitude=store.longitude,
+                        category=store.category,
+                    )
+                    for store in datas.itertuples()
+                ]
 
-        datas=store_recommendation.recommendation_menu_distance(store_id,dis)
-        print(datas)
-        stores= [
-                models.Store(
-                    id=store.id,
-                    store_name=store.store_name,
-                    branch=store.branch,
-                    area=store.area,
-                    tel=store.tel,
-                    address=store.address,
-                    latitude=store.latitude,
-                    longitude=store.longitude,
-                    category=store.category,
-                )
-                for store in datas.itertuples()
-            ]
-
-        serializer = StoreSerializer(stores, many=True)
-        return Response(serializer.data)
+            serializer = StoreSerializer(stores, many=True)
+            return Response(serializer.data)
+        except:
+            stores=[]
+            serializer = StoreSerializer(stores, many=True)
+            return Response(serializer.data)
 
 class recommendedByCategory(APIView):
     def get(self,request, store_id,dis):
         print(str(store_id)+" "+str(dis))
+        try:
+            datas=store_recommendation.recommendation_category_distance(store_id,dis)
+            print(datas)
+            stores= [
+                    models.Store(
+                        id=store.id,
+                        store_name=store.store_name,
+                        branch=store.branch,
+                        area=store.area,
+                        tel=store.tel,
+                        address=store.address,
+                        latitude=store.latitude,
+                        longitude=store.longitude,
+                        category=store.category,
+                    )
+                    for store in datas.itertuples()
+                ]
 
-        datas=store_recommendation.recommendation_category_distance(store_id,dis)
-        print(datas)
-        stores= [
-                models.Store(
-                    id=store.id,
-                    store_name=store.store_name,
-                    branch=store.branch,
-                    area=store.area,
-                    tel=store.tel,
-                    address=store.address,
-                    latitude=store.latitude,
-                    longitude=store.longitude,
-                    category=store.category,
-                )
-                for store in datas.itertuples()
-            ]
-
-        serializer = StoreSerializer(stores, many=True)
-        return Response(serializer.data)
+            serializer = StoreSerializer(stores, many=True)
+            return Response(serializer.data)
+        except:
+            stores = []
+            serializer = StoreSerializer(stores, many=True)
+            return Response(serializer.data)
 # class recommendedByMenu(APIView):
 #     def post(self, request):
 #         store_id=request.POST['store_id']
