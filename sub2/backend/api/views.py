@@ -433,7 +433,7 @@ def conn_create():
         drivername="mysql",
         username="root",
         password="ssafy",
-        host="52.79.223.182",
+        host="52.78.173.64",
         port="3306",
         database="django_test",
         query = {'charset': 'utf8mb4'}
