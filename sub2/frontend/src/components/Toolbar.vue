@@ -6,9 +6,12 @@
       <v-icon>mdi-view-list</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
+    <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain></v-img>
+    <div class="Do fs40" style="display:inline-block">세명맛집</div>
+    <v-spacer></v-spacer>
     <loginDialog v-if="$cookie.get('token') == null"></loginDialog>
-    <v-btn v-if="$cookie.get('token') != null" to="/myPage" class="mx-1" rounded>myPage</v-btn>
-    <v-btn v-if="$cookie.get('token') != null" @click.stop="logout" class="mx-1" rounded>로그아웃</v-btn>
+    <v-btn v-if="$cookie.get('token') != null" to="/myPage" class="mx-1 cabin" rounded text >myPage</v-btn>
+    <v-btn v-if="$cookie.get('token') != null" @click.stop="logout" class="mx-1 cabin" rounded text>Logout</v-btn>
     
   </v-app-bar>
 </template>
@@ -218,3 +221,15 @@ export default {
   }
 };
 </script>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&Cabin&display=swap');
+.cabin {
+  font-family: 'Cabin', sans-serif;
+}
+.fs40 {
+  font-size: 40px;
+}
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
+</style>

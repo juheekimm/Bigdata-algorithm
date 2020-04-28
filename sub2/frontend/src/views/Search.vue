@@ -1,5 +1,5 @@
 <template>
-  <v-container v-scroll="onScroll">
+  <v-container v-scroll="onScroll" style="background:white">
     <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
       <v-flex md10 xs12>
@@ -47,7 +47,7 @@
                 v-bind="resultListProps"
                 v-on="resultListListeners"
                 class="pa-0"
-                style="background: #ffffff; z-index: 10;"
+                style="background: #ffffff; z-index: 10;  border-color: gray;  border-style: solid; border-radius: 10px;"
               >
                 <v-hover
                   v-slot:default="{ hover }"
@@ -68,10 +68,10 @@
                   >
                     <v-row>
                       <v-col class="">
-                        {{ result }}
+                        <v-icon>mdi-magnify</v-icon>{{ result }}
                       </v-col>
-                      <v-col justify-right class="text-right">
-                        임시
+                      <v-col justify-right class="text-right" style="color:gray">
+                        상점
                       </v-col>
                     </v-row>
                   </v-card>
@@ -86,7 +86,7 @@
     <!-- storeList + map -->
     <v-layout wrap mt-5>
       <!-- storeList -->
-      <v-flex md9 xs12>
+      <v-flex md9 xs12 v-if="storeSearchList.length != 0">
         <v-layout justify-end md12>
           <v-col class="d-flex py-0" cols="3" sm="3">
           </v-col>
@@ -147,13 +147,40 @@
           </v-flex>
         </v-layout>
       </v-flex>
+      <!-- storeList가 없을 때 -->
+      <v-flex md9 xs12 v-if="storeSearchList.length == 0">
+        <v-layout justify-end md12>
+          <v-col class="d-flex py-0" cols="3" sm="3">
+          </v-col>
+        </v-layout>
+        <v-layout wrap height="400px" class="pt-3">
+          <v-sheet
+            color="white"
+            width="100%"
+            style="height: 400px;"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div class="animated shake">
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
+                </p>
+                <div class="display-1">검색된 결과가 없습니다.</div>
+              </div>
+            </v-row>
+          </v-sheet>
+        </v-layout>
+      </v-flex>
       
       <!-- map -->
       <v-flex md3 class="d-none d-md-block">
         <v-col cols=12>
           <div 
             id="map" 
-            style="width:80% ;height:400px; z-index:0"
+            style="width:100% ;height:400px; z-index:0"
             v-bind:style="{
               top: mapPostion + 'px'
             }"
