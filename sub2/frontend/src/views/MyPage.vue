@@ -1,11 +1,8 @@
 <template>
-   <v-container
-    class="mt-5"
-    style="background-color: white; padding-top: 1.5em; max-width : 800px"
-  >
+   <v-container class="container">
     <!-- STORE -->
     <v-layout wrap mt-5 class="mx-3" >
-      <!--STORE title-->
+      <!--MyInfo title-->
       <v-flex sm12 xs12>
         <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
           MyInfo
@@ -38,6 +35,71 @@
             </tbody>
           </template>
         </v-simple-table>
+      </v-flex>
+      <!--Recommand title-->
+      <v-flex sm12 xs12 class="mt-4">
+        <span class="ma-0 font-weight-light" style="font-size: 1.8em;">
+          여긴 어떠세요?
+        </span>
+        <span>
+          (<b style="color:orange">{{curYear()-user.age+1}}</b>세의 <b style="color:orange">{{user.gender == "여"?"여성":"남성"}}</b>들이 추천합니다.)
+        </span>
+        <v-divider class="mb-5 mt-1"></v-divider>
+        <v-tabs
+          background-color="transparent"
+          center-active
+          height="auto"
+          >
+          <v-tabs-slider color="transparent"></v-tabs-slider>
+          <v-tab v-for="(result,index) in recommandList" :key="index+'ab'" class="pa-0">
+            <div>
+              <v-hover v-slot:default="{ hover }" >
+                <v-card color="grey lighten-4" class="ma-4" :to="'/storeDetail?storeId='+result.id" width="200px">
+                  <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out cyan lighten-1 v-card--reveal black--text "
+                        style="height: 100%;"
+                        >
+                        <b
+                          v-for="(cate, index) in result.category.split('|')"
+                          :key="index"
+                          class="title"
+                          >
+                          #{{ cate }}
+                        </b>
+                      </div>
+                    </v-expand-transition>
+                  </v-img>
+                  <v-card-text class="pa-1" style="position: relative;">
+                    <v-btn
+                      absolute
+                      :color="getRecommandColor(index)"
+                      class="white--text"
+                      fab
+                      large
+                      right
+                      top
+                    >
+                      <v-icon style="font-size:40px">mdi-license</v-icon>
+                    </v-btn>
+                    <div class="title font-weight-light orange--text">
+                      {{ result.store_name }}
+                    </div>
+                    <div
+                      class="font-weight-light grey--text caption"
+                      style="text-align: left;"
+                      >
+                        {{ result.area }}
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-hover>
+            </div>
+          </v-tab>
+          
+        </v-tabs>
       </v-flex>
       <!--User Review title-->
       <v-flex sm12 xs12 class="mt-4">
@@ -132,6 +194,27 @@
         </v-hover>
       </v-flex>
     </v-layout>
+    <!-- loadingdialog -->
+    <v-dialog
+      v-model="loading"
+      hide-overlay
+      persistent
+      width="300"
+      >
+      <v-card
+        color="primary"
+        dark
+        >
+        <v-card-text>
+          Please stand by
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -145,7 +228,8 @@ export default {
   data: () => ({
     user : {},
     reviews : [],
-    isLoading : false,
+    loading : false,
+    recommandList : [],
   }),
   created() {
     this.loadData()
@@ -189,7 +273,7 @@ export default {
         })
     },
     loadData() {
-      // this.isLoading = true
+      this.loading = true
 
       let form = new FormData()
       var headers = {
@@ -199,19 +283,25 @@ export default {
 
       const requestUser = http.post('/api/userbyToken',form,headers)
       const requestUserReview = http.post('/api/UserReviewbyToken',form,headers)
+      const requestReco = http.post('/api/storeRecobytToken',form,headers)
+      
 
       axios
-        .all([requestUser, requestUserReview])
+        .all([requestUser, requestUserReview, requestReco ])
         .then(
           axios.spread((...responses) => {
             const responseUser = responses[0]
             const responseUserReview = responses[1]
+            const responseReco = responses[2]
 
             this.user = responseUser.data[0]
             this.reviews = responseUserReview.data
+            this.recommandList =responseReco.data
+            this.loading = false
 
-            console.log(this.user)
-            console.log(this.reviews)
+            // console.log(responseReco)
+            // console.log(this.user)
+            // console.log(this.reviews)
           })
         )
         .catch((errors) => {
@@ -224,6 +314,17 @@ export default {
     },
     test(){
 
+    },
+    getRecommandColor(index){
+      if(index == 0){
+        return '#D9D919'
+      }else if(index == 1){
+        return '#E6E8FA'
+      }else if(index == 2){
+        return '#A67D3D'
+      }else{
+        return '#BDBDBD'
+      }
     }
   },
 }
@@ -268,5 +369,16 @@ export default {
   padding-right: 1em;
   padding-bottom: 1em;
 }
+.container{
+  border-style: solid;
+  border-color: #82b1ff;
+  border-radius: 20px;
+  border-width: 8px;
+  background-color: white; 
+  padding-top: 0.5em; 
+  margin-top: 1.5em; 
+  max-width : 800px
+}
+
 
 </style>
