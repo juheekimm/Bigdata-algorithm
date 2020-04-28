@@ -84,7 +84,6 @@ export default {
 
   }),
   created() {
-    console.log("creatd")
     if (!(window.kakao && window.kakao.maps)) this.addScript()
   },
   mounted() {
@@ -188,11 +187,10 @@ export default {
       http
         .post('api/SearchNearbyStore', form)
         .then(response => {
-          console.log(response.data)
           this.storeList = response.data
           this.addMarkers()
           this.addCircle(curLat,curLng)
-          this.addCurDot(curLat,currLng)
+          this.addCurDot(curLat,curLng)
         })
         .catch(err => {
           console.log(err)
@@ -303,7 +301,6 @@ export default {
       // this.,map.setLevel(2)
     },
     changeDistance(){
-      console.log(this.map.getCenter)
       var centerLat = this.map.getCenter().getLat()
       var centerLng = this.map.getCenter().getLng()
       this.calNearStore(centerLat,centerLng)

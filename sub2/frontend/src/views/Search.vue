@@ -86,7 +86,7 @@
     <!-- storeList + map -->
     <v-layout wrap mt-5>
       <!-- storeList -->
-      <v-flex md9 xs12>
+      <v-flex md9 xs12 v-if="storeSearchList.length != 0">
         <v-layout justify-end md12>
           <v-col class="d-flex py-0" cols="3" sm="3">
           </v-col>
@@ -147,13 +147,38 @@
           </v-flex>
         </v-layout>
       </v-flex>
+      <!-- storeList가 없을 때 -->
+      <v-flex md9 xs12 v-if="storeSearchList.length == 0">
+        <v-layout justify-end md12>
+          <v-col class="d-flex py-0" cols="3" sm="3">
+          </v-col>
+        </v-layout>
+        <v-layout wrap height="400px" class="pt-3">
+          <v-sheet
+            color="white"
+            width="100%"
+            style="height: 400px;"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div>
+                <div style="text-align-last: center;"><v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon></div>
+                <div class="display-1">검색된 결과가 없습니다.</div>
+              </div>
+            </v-row>
+          </v-sheet>
+        </v-layout>
+      </v-flex>
       
       <!-- map -->
       <v-flex md3 class="d-none d-md-block">
         <v-col cols=12>
           <div 
             id="map" 
-            style="width:80% ;height:400px; z-index:0"
+            style="width:100% ;height:400px; z-index:0"
             v-bind:style="{
               top: mapPostion + 'px'
             }"
