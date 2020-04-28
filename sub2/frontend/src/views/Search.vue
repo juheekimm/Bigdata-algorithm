@@ -1,5 +1,5 @@
 <template>
-  <v-container v-scroll="onScroll">
+  <v-container v-scroll="onScroll" style="background:white">
     <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
       <v-flex md10 xs12>
@@ -164,8 +164,10 @@
               align="center"
               justify="center"
               >
-              <div>
-                <div style="text-align-last: center;"><v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon></div>
+              <div class="animated shake">
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
+                </p>
                 <div class="display-1">검색된 결과가 없습니다.</div>
               </div>
             </v-row>

@@ -5,9 +5,9 @@
         <div class="page-1 page">
           <p class="Do fs70" v-animate="{value: 'bounceInDown',delay: 0}">세명맛집</p>
           <p class="Do fs50" v-animate="{value: 'bounceInDown',delay: 100}">
-            <span style="color : red">세</span>상 유<span style="color : red">명</span>한 <span style="color : red">맛집 모두다!</span>
+            <span style="color : red">세</span>상 유<span style="color : red">명</span>한 <span style="color : red">맛집</span> 모두다!
           </p>
-          <p class="Noto fs40" v-animate="{value: 'bounceInDown',delay: 200}">★우리 세명이 이걸 만든 겁니다★</p>
+          <p class="Noto fs40" v-animate="{value: 'bounceInDown',delay: 200}">★우리 세명이 이걸 만들었습니다★</p>
         </div>
 
         <div class="page-2 page" style="color: black;">

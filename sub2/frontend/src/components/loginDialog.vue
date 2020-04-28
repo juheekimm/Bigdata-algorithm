@@ -1,5 +1,5 @@
 <template>
-    <v-btn v-if="$cookie.get('token') == null" @click.stop="loginDialog = true" rounded>로그인
+    <v-btn v-if="$cookie.get('token') == null" text @click.stop="loginDialog = true" rounded class="cabin">Login
     <v-dialog v-model="loginDialog" max-width="290">
       <v-card>
         <v-card-title>
@@ -245,3 +245,12 @@ export default {
   }
 };
 </script>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Cabin&display=swap');
+.cabin {
+  font-family: 'Cabin', sans-serif;
+}
+.fs40 {
+  font-size: 40px;
+}
+</style>
