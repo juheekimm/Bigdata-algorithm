@@ -47,7 +47,7 @@
                 v-bind="resultListProps"
                 v-on="resultListListeners"
                 class="pa-0"
-                style="background: #ffffff; z-index: 10;"
+                style="background: #ffffff; z-index: 10;  border-color: gray;  border-style: solid; border-radius: 10px;"
               >
                 <v-hover
                   v-slot:default="{ hover }"
@@ -68,10 +68,10 @@
                   >
                     <v-row>
                       <v-col class="">
-                        {{ result }}
+                        <v-icon>mdi-magnify</v-icon>{{ result }}
                       </v-col>
-                      <v-col justify-right class="text-right">
-                        임시
+                      <v-col justify-right class="text-right" style="color:gray">
+                        상점
                       </v-col>
                     </v-row>
                   </v-card>
