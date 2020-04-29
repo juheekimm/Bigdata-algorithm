@@ -27,7 +27,7 @@
             
             <v-container fill-height class="px-0">
               <v-list
-                style="max-height: 400px; width:100%"
+                style="min-height: 400px; max-height: 400px; width:100%"
                 class="overflow-y-auto"
               >
                 <v-list-item 

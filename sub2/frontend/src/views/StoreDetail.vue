@@ -509,6 +509,7 @@ export default {
         )
         .catch((errors) => {
           console.log(errors)
+          this.loading = false
         })
     },
     addScript() {

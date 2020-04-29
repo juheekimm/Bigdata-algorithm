@@ -1,17 +1,66 @@
 <template>
   <v-container class="px-5" fill-height>
     <v-layout>
-      <v-flex sm4 class="animated flipInY">
-        안녕^_^
-        김태민
+      <v-flex sm4 class="animated flipInY pa-5">
+        <v-sheet
+            color="#FFFFA1"
+            width="100%"
+            height="100%"
+            class="card"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div>
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
+                </p>
+                <div class="display-1">검색된 결과가 없습니다.</div>
+              </div>
+            </v-row>
+          </v-sheet>
       </v-flex>
-      <v-flex sm4 class="animated flipInY delay-1s">
-        안녕^_^
-        김태민
+      <v-flex sm4 class="animated flipInY pa-5">
+        <v-sheet
+            color="#B2CCFF"
+            width="100%"
+            height="100%"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div class="animated shake">
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
+                </p>
+                <div class="display-1">검색된 결과가 없습니다.</div>
+              </div>
+            </v-row>
+          </v-sheet>
       </v-flex>
-      <v-flex sm4 class="animated flipInY delay-2s">
-        안녕^_^
-        김태민
+      <v-flex sm4 class="animated flipInY pa-5">
+        <v-sheet
+            color="#D1B2FF"
+            width="100%"
+            height="100%"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div class="animated shake">
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
+                </p>
+                <div class="display-1">검색된 결과가 없습니다.</div>
+              </div>
+            </v-row>
+          </v-sheet>
       </v-flex>
 
     </v-layout>
@@ -35,6 +84,9 @@ export default {
 </script>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Serif+KR:wght@300;400;900&family=Song+Myung&display=swap');
+.card{
+  border-radius: 30px;
+}
 .Song {
   font-family: 'Song Myung', serif;
 }
