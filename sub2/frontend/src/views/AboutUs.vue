@@ -1,7 +1,21 @@
 <template>
-  <div>
-      
-    </div>
+  <v-container class="px-5" fill-height>
+    <v-layout>
+      <v-flex sm4 class="animated flipInY">
+        안녕^_^
+        김태민
+      </v-flex>
+      <v-flex sm4 class="animated flipInY delay-1s">
+        안녕^_^
+        김태민
+      </v-flex>
+      <v-flex sm4 class="animated flipInY delay-2s">
+        안녕^_^
+        김태민
+      </v-flex>
+
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

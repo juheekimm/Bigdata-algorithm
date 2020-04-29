@@ -197,8 +197,12 @@ export default {
             this.joinDialog = false
           })
           .catch((error) => {
+
+            if(error.response == undefined){
+              alert("서버와의 연결이 불안정합니다.")
+            }
             // userName 중복
-            if(error.response.data.username != undefined){
+            else if(error.response.data.username != undefined){
               alert("중복된 ID입니다.")
               this.username = ""
             }
