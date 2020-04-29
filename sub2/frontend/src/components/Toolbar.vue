@@ -125,12 +125,7 @@ export default {
       else 
         return true
     },   
-    test(){
-      // this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
-      console.log(this.$cookie.get('csrftoken'))
-      // window.location.reload();
-      // this.$cookie.delete('token')
-    },
+    
     test2(){
       let form = new FormData()
       form.append('username', 'taemin010')
@@ -183,8 +178,6 @@ export default {
       http
         .post('/auth/token/',form)
         .then(response => {
-          console.log(response)
-          console.log(response.data)
           this.$cookie.set('token', response.data.token , { expires: '30m' });
           window.location.reload()
         })
@@ -204,7 +197,6 @@ export default {
     logout(){
       this.$cookie.delete('token')
       window.location.reload()
-      console.log()
     },
     goHome(){
       this.$router.push("/")

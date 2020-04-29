@@ -265,7 +265,7 @@ export default {
       let form = new FormData()
       form.append('keyword', input)
       this.keyword = input
-      console.log('search')
+      // console.log('search')
       return new Promise(resolve => {
         if (input.length < 2) {
           return resolve([])
@@ -277,7 +277,7 @@ export default {
             // console.log(response.data)
             var list = []
             response.data.forEach(element => list.push(element.store_name))
-            console.log(list)
+            // console.log(list)
             resolve(list)
           })
           .catch(err => {
@@ -309,7 +309,7 @@ export default {
       form.append('count',this.storeSearchPage)
       form.append('size',12)
 
-      console.log("storeSearchPage : " + this.storeSearchPage)
+      // console.log("storeSearchPage : " + this.storeSearchPage)
       
       this.loading = true
       http
@@ -318,7 +318,7 @@ export default {
           // console.log(response.data)
           this.loading = false
           if (response.status == 200) {
-            console.log(response.data.storeList)
+            // console.log(response.data.storeList)
             this.setStoreSearchList(response.data.storeList)
             this.incrementStoreSearchPage()
           } else {
@@ -390,7 +390,7 @@ export default {
       http
         .post('api/searchStore', form)
         .then(response => {
-          console.log(response.data.storeList)
+          // console.log(response.data.storeList)
           tmpList = response.data.storeList
           if(tmpList.length > 0) {
             this.incrementStoreSearchPage()
@@ -406,8 +406,7 @@ export default {
         })
     },
     test(){
-      console.log(this.storeSearchPage)
-      console.log("dfsdfsdf")
+      // console.log(this.storeSearchPage)
       this.loading = true
     },
     onScroll(){

@@ -250,7 +250,7 @@ export default {
         .post('/api/userbyToken',form,headers)
         .then(response => {
           this.user = response.data[0]
-          console.log(this.user)
+          // console.log(this.user)
         })
         .catch(err => {
           console.log(err)
@@ -266,7 +266,7 @@ export default {
       http
         .post('/api/UserReviewbyToken',form,headers)
         .then(response => {
-          console.log(response.data)
+          // console.log(response.data)
         })
         .catch(err => {
           console.log(err)

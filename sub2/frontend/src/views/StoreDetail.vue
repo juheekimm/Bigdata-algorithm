@@ -493,7 +493,7 @@ export default {
             this.recommandList = responseRecommand.data
             this.matrixList = responseMatrix.data
 
-            console.log(this.matrixList)
+            // console.log(this.matrixList)
 
             this.totalScore = 0
             this.reviews.forEach((element) => {
@@ -560,8 +560,8 @@ export default {
       http
         .post('/api/writeReview',form,headers)
         .then(response => {
-          console.log(response)
-          console.log(response.data)
+          // console.log(response)
+          // console.log(response.data)
           this.loadReviewList()
           this.reviewDialog = false
 
@@ -589,7 +589,7 @@ export default {
       http
         .post('/api/SearchReviewbyStoreId',form)
         .then(response => {
-          console.log(response)
+          // console.log(response)
           this.reviews = response.data
 
           this.totalScore = 0
@@ -611,7 +611,7 @@ export default {
         return;
       }else{
         // 리뷰창 띄우기
-        console.log(content)
+        // console.log(content)
         this.contents = content
         this.rating = score
         this.reviewUserId = userid
@@ -633,7 +633,7 @@ export default {
           headers: { 'Authorization': 'jwt '+ this.$cookie.get('token')}
         }
       
-      console.log(this.$cookie.get('token'))
+      // console.log(this.$cookie.get('token'))
         
       http
         .post('/api/updateReview',form,headers)
@@ -691,7 +691,7 @@ export default {
       }
     },
     changeRecommand(){
-      console.log("changeRecommand")
+      // console.log("changeRecommand")
       var key = this.recommandkeyword
       var dis = this.recommandDistance
       var storeId = this.$route.query.storeId

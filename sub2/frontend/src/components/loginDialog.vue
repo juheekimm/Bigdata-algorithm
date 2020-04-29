@@ -172,12 +172,6 @@ export default {
         return "닉네임은 최대 5자 까지 가능합니다."
       else 
         return true
-    },   
-    test(){
-      // this.$cookie.set('token', 'gg' , { expires: '60s' });
-      console.log(this.$cookie.get('csrftoken'))
-      // window.location.reload();
-      // this.$cookie.delete('token')
     },
     signup(){
       if(this.idHintMethod() == true && this.vertifyPassword() == true && this.passwordHintMethod()== true && this.emailHintMethod()==true && this.nicknameHintMethod() ==true){
@@ -228,8 +222,6 @@ export default {
       http
         .post('/auth/token/',form)
         .then(response => {
-          console.log(response)
-          console.log(response.data)
           this.$cookie.set('token', response.data.token , { expires: '30m' });
           window.location.reload()
         })
