@@ -306,6 +306,8 @@ export default {
         )
         .catch((errors) => {
           console.log(errors)
+          alert("마이페이지를 로그인 후 이용가능합니다.")
+          his.loading = false
         })
     },
     curYear() {
