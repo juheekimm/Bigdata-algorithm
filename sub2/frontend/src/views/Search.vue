@@ -1,8 +1,14 @@
 <template>
-  <v-container v-scroll="onScroll" style="background:white">
+  <v-container v-scroll="onScroll" class="Container pt-4">
     <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
-      <v-flex md10 xs12>
+      <v-flex sm2 md3 xs12>
+        <div style="text-align: center;">
+          <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain style="cursor:pointer; display: inline-block;" ></v-img>
+          <p class="Do fs40" style="display:inline-block; cursor:pointer">세명맛집</p>
+        </div>
+      </v-flex>
+      <v-flex sm10 md9 xs12>
         <autocomplete
           :search="search"
           placeholder="음식점을 찾아보세요"
@@ -82,6 +88,8 @@
         </autocomplete>
       </v-flex>
     </v-layout>
+
+    <v-divider></v-divider>
 
     <!-- storeList + map -->
     <v-layout wrap mt-5>
@@ -265,7 +273,7 @@ export default {
       let form = new FormData()
       form.append('keyword', input)
       this.keyword = input
-      console.log('search')
+      // console.log('search')
       return new Promise(resolve => {
         if (input.length < 2) {
           return resolve([])
@@ -277,7 +285,7 @@ export default {
             // console.log(response.data)
             var list = []
             response.data.forEach(element => list.push(element.store_name))
-            console.log(list)
+            // console.log(list)
             resolve(list)
           })
           .catch(err => {
@@ -309,7 +317,7 @@ export default {
       form.append('count',this.storeSearchPage)
       form.append('size',12)
 
-      console.log("storeSearchPage : " + this.storeSearchPage)
+      // console.log("storeSearchPage : " + this.storeSearchPage)
       
       this.loading = true
       http
@@ -318,7 +326,7 @@ export default {
           // console.log(response.data)
           this.loading = false
           if (response.status == 200) {
-            console.log(response.data.storeList)
+            // console.log(response.data.storeList)
             this.setStoreSearchList(response.data.storeList)
             this.incrementStoreSearchPage()
           } else {
@@ -390,7 +398,7 @@ export default {
       http
         .post('api/searchStore', form)
         .then(response => {
-          console.log(response.data.storeList)
+          // console.log(response.data.storeList)
           tmpList = response.data.storeList
           if(tmpList.length > 0) {
             this.incrementStoreSearchPage()
@@ -406,8 +414,7 @@ export default {
         })
     },
     test(){
-      console.log(this.storeSearchPage)
-      console.log("dfsdfsdf")
+      // console.log(this.storeSearchPage)
       this.loading = true
     },
     onScroll(){
@@ -425,6 +432,16 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
+.fs50 {
+  font-size: 50px;
+}
+.fs40 {
+  font-size: 50px;
+}
 .autocomplete-input-no-results.autocomplete-input-focused {
   border: 3px solid green;
   /* border-bottom-color: transparent;
@@ -471,5 +488,16 @@ input {
 }
 .list-item {
   display: inline-block;
+}
+
+.Container{
+  background: white;
+   
+  /* border-top-style: solid;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-color: #77ddcf;
+  border-radius: 20px 20px 0px 0px;
+  border-width: 5px; */
 }
 </style>

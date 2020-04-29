@@ -9,7 +9,7 @@
     <v-layout wrap mt-5 class="mx-3" sm12>
       <!--STORE title-->
       <v-flex sm12 xs12>
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
+        <p class="ma-0 Do" style="font-size: 1.8em;">
           Store
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
@@ -60,18 +60,31 @@
       <v-flex sm3 hidden-xs-only>
         <div id="map" style="width:100% ;height:300px; z-index:0"></div>
       </v-flex>
-      <!--recommand List -->
+      <!--menu -->
       <v-flex sm12 xs12>
-        <span class="ma-0 font-weight-light" style="font-size: 1.8em; ">추천리스트</span>
+        <p class="ma-0 Do" style="font-size: 1.8em;">Menu</p>
+        <v-divider class="mb-5 mt-1"></v-divider>
+
+        <div
+          v-for="(menu, index) in menus"
+          :key="index"
+          class="font-weight-light Nanum"
+        >
+          {{ menu.menu_name }} / {{ menu.price.toFixed(0) }}원
+        </div>
+      </v-flex>
+      <!--recommand List -->
+      <v-flex sm12 xs12 class="outerFlex">
+        <span class="ma-0 font-weight-light Do" style="font-size: 1.8em; "><v-icon color='red'>mdi-heart</v-icon>추천리스트</span>
         <!-- 추천리스트 기준 -->
-        <div hidden-xs-only style="display: inline-block;">
+        <div hidden-xs-only style="display: inline-block;" class="Nanum">
           <span>(</span>
           <span>
             <v-select
               :items="recommandkeywordList"
               v-model="recommandkeyword"
               class="ma-0 pa-0 px-2"
-              style="display: inline-block; width:120px"
+              style="display: inline-block; width:120px; font-weight: bold;"
               hide-details
               dense
               v-on:change="changeRecommand"
@@ -83,7 +96,7 @@
               :items="recommandDistanceList"
               v-model="recommandDistance"
               class="px-2"
-              style="display: inline-block; width:50px"
+              style="display: inline-block; width:50px; font-weight: bold;"
               hide-details
               dense
               v-on:change="changeRecommand"
@@ -123,7 +136,84 @@
                     </v-expand-transition>
                   </v-img>
                   <v-card-text class="pa-1" style="position: relative;">
-                    <div class="title font-weight-light orange--text">
+                    <div class="title font-weight-regular orange--text">
+                      {{ result.store_name }}
+                    </div>
+                    <div
+                      class="font-weight-light grey--text caption"
+                      style="text-align: left;"
+                      >
+                        {{ result.area }}
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-hover>
+            </div>
+          </v-tab>
+          
+        </v-tabs>
+        <!-- list가 아무것도 없을 때 -->
+        <div v-if="recommandList.length == 0">
+          <v-layout wrap height="400px" class="pt-3">
+          <v-sheet
+            color="white"
+            width="100%"
+            style="height: 200px;"
+            >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+              >
+              <div class="animated shake">
+                <p style="text-align-last: center;" >
+                  <v-icon style="font-size:100px" color="yellow">mdi-alert</v-icon>
+                </p>
+                <div class="display-1">추천을 위한 정보가 부족해요!</div>
+              </div>
+            </v-row>
+          </v-sheet>
+          </v-layout>
+        </div>
+      </v-flex>
+      <!--matrix -->
+      <v-flex sm12 xs12 class="outerFlex" v-if="matrixList.length != 0">
+        <!--title-->
+        <span class="ma-0 font-weight-light Do" style="font-size: 1.8em; "><v-icon color='red'>mdi-heart</v-icon>이 곳은 어떠세요?</span>
+        <span class="Nanum">(사용자 리뷰에 기반하여 맛집을 추천해드립니다)</span>
+        
+        <v-divider class="mb-5 mt-1"></v-divider>
+        <!-- matrix List -->
+        <v-tabs
+          background-color="transparent"
+          center-active
+          height="auto"
+          show-arrows
+          >
+          <v-tabs-slider color="transparent"></v-tabs-slider>
+          <v-tab v-for="(result,index) in matrixList" :key="index+'ab'" class="pa-0">
+            <div>
+              <v-hover v-slot:default="{ hover }" >
+                <v-card color="grey lighten-4" class="ma-4" :to="'/storeDetail?storeId='+result.id" width="200px">
+                  <v-img :aspect-ratio="1 / 1" src="../assets/storeTemp.png">
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out cyan lighten-1 v-card--reveal black--text "
+                        style="height: 100%; word-break:break-all"
+                        >
+                        <b
+                          v-for="(cate, index) in result.category.split('|')"
+                          :key="index"
+                          class="title"
+                          >
+                          #{{ cate }}
+                        </b>
+                      </div>
+                    </v-expand-transition>
+                  </v-img>
+                  <v-card-text class="pa-1" style="position: relative;">
+                    <div class="title font-weight-regular orange--text">
                       {{ result.store_name }}
                     </div>
                     <div
@@ -140,23 +230,11 @@
           
         </v-tabs>
       </v-flex>
-      <!--menu -->
-      <v-flex sm12 xs12>
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">Menu</p>
-        <v-divider class="mb-5 mt-1"></v-divider>
-
-        <div
-          v-for="(menu, index) in menus"
-          :key="index"
-          class="font-weight-light"
-        >
-          {{ menu.menu_name }} / {{ menu.price.toFixed(0) }}원
-        </div>
-      </v-flex>
+      
 
       <!--review title-->
       <v-flex sm12 id ="reviewTitle">
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
+        <p class="ma-0 font-weight-light Do" style="font-size: 1.8em;">
           Reveiw ({{ reviews.length }}건) 
           <v-btn text @click="reviewDialog = true"><v-icon color="blue">mdi-pencil</v-icon><b>리뷰작성</b></v-btn>
         </p>
@@ -372,6 +450,7 @@ export default {
     recommandList : [],
     loading : false,
     tabIndex : 0,
+    matrixList : [],
     
   }),
   created() {
@@ -387,28 +466,34 @@ export default {
 
       let form = new FormData()
       form.append('storeId', this.$route.query.storeId)
+      let from2 = {"store_id": this.$route.query.storeId}
 
       const requestStore = http.post('/api/SearchStorebyStoreId', form)
       const requestMenu = http.post('/api/SearchMenubyStoreId', form)
       const requestReview = http.post('/api/SearchReviewbyStoreId', form)
       const requestRecommandList = http.get('/api/recommendedByMenu/'+this.$route.query.storeId+"_"+this.recommandDistance)
+      const requestMatrix = http.post('/api/matrixFactorization',from2)
       // const requestRecommandList = http.get('/api/recommendedByMenu/149_1')
 
       axios
-        .all([requestStore, requestMenu, requestReview, requestRecommandList])
+        .all([requestStore, requestMenu, requestReview, requestRecommandList, requestMatrix])
         .then(
           axios.spread((...responses) => {
             const responseStore = responses[0]
             const responseMenu = responses[1]
             const responesReview = responses[2]
             const responseRecommand = responses[3]
+            const responseMatrix = responses[4]
 
-            console.log(responseRecommand.data)
+            // console.log(responseMatrix.data)
 
             this.store = responseStore.data[0]
             this.menus = responseMenu.data
             this.reviews = responesReview.data
             this.recommandList = responseRecommand.data
+            this.matrixList = responseMatrix.data
+
+            // console.log(this.matrixList)
 
             this.totalScore = 0
             this.reviews.forEach((element) => {
@@ -424,6 +509,7 @@ export default {
         )
         .catch((errors) => {
           console.log(errors)
+          this.loading = false
         })
     },
     addScript() {
@@ -474,8 +560,8 @@ export default {
       http
         .post('/api/writeReview',form,headers)
         .then(response => {
-          console.log(response)
-          console.log(response.data)
+          // console.log(response)
+          // console.log(response.data)
           this.loadReviewList()
           this.reviewDialog = false
 
@@ -503,7 +589,7 @@ export default {
       http
         .post('/api/SearchReviewbyStoreId',form)
         .then(response => {
-          console.log(response)
+          // console.log(response)
           this.reviews = response.data
 
           this.totalScore = 0
@@ -525,7 +611,7 @@ export default {
         return;
       }else{
         // 리뷰창 띄우기
-        console.log(content)
+        // console.log(content)
         this.contents = content
         this.rating = score
         this.reviewUserId = userid
@@ -547,7 +633,7 @@ export default {
           headers: { 'Authorization': 'jwt '+ this.$cookie.get('token')}
         }
       
-      console.log(this.$cookie.get('token'))
+      // console.log(this.$cookie.get('token'))
         
       http
         .post('/api/updateReview',form,headers)
@@ -605,7 +691,7 @@ export default {
       }
     },
     changeRecommand(){
-      console.log("changeRecommand")
+      // console.log("changeRecommand")
       var key = this.recommandkeyword
       var dis = this.recommandDistance
       var storeId = this.$route.query.storeId
@@ -646,6 +732,19 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&Do+Hyeon&family=Noto+Serif+KR:wght@300;400;900&family=Song+Myung&display=swap');
+.Song {
+  font-family: 'Song Myung', serif;
+}
+.Noto {
+  font-family: 'Noto Serif KR', serif;
+}
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
+.Nanum {
+  font-family: 'Nanum Gothic', sans-serif;
+}
 .reviewCard {
   width: 100%;
   margin-bottom: 1em;
@@ -662,5 +761,13 @@ export default {
   opacity: 0.7;
   position: absolute;
   width: 100%;
+}
+
+.outerFlex {
+  background: #dffbff;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>

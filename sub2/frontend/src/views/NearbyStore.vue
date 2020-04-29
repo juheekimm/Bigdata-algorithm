@@ -1,15 +1,15 @@
 <template>
-  <v-container fill-height>
+  <v-container fill-height class="Container">
     <v-layout wrap mt-5 class="mx-3" >
       <v-flex sm9>
-        <div id="map" style="width:100%;height:100%;"></div>
+        <div id="map" style="width:100%;height:95%;"></div>
       </v-flex>
       <v-flex sm3>
         <v-card class="mx-3">
-          <v-card-title>
+          <v-card-title class="Do">
             주변 음식점 찾기
           </v-card-title>
-          <v-card-text class="pb-0">
+          <v-card-text class="pb-0 Do">
             반경
             <v-divider>
             </v-divider>
@@ -20,14 +20,14 @@
               <v-radio label="400m" value="400"></v-radio>
             </v-radio-group>
           </v-card-text>
-          <v-card-text>
+          <v-card-text class="Do">
             상점 리스트
             <v-divider>
             </v-divider>
             
             <v-container fill-height class="px-0">
               <v-list
-                style="max-height: 400px; width:100%"
+                style="min-height: 380px; max-height: 380px; width:100%"
                 class="overflow-y-auto"
               >
                 <v-list-item 
@@ -211,22 +211,44 @@ export default {
           position: locPosition,
         }); 
 
-        //인포윈도우
-        // var iwContent = storeList[index].store_name
-        // var iwRemoveable = true;
-        // var infowindow = new kakao.maps.InfoWindow({
-        //   content : iwContent,
-        //   removable : iwRemoveable
-        // })
-        // infowindow.open(this.map, marker);
+        var iwContent = '<div style="padding:5px;">'+storeList[index].store_name+'</div>'; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+        // 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content : iwContent
+        });
+
+        // 마커에 마우스오버 이벤트를 등록합니다
+        kakao.maps.event.addListener(marker, 'mouseover', this.makeOverListener(this.map,marker,infowindow));
+
+        // 마커에 마우스아웃 이벤트를 등록합니다
+        kakao.maps.event.addListener(marker, 'mouseout', this.makeOutListener(infowindow));
+
+        // 마커에 마우스 클릭 이베트를 등록
+        kakao.maps.event.addListener(marker, 'click', this.makeClickListner(storeList[index].id))
 
         marker.setMap(this.map);
         marker.setImage(markerImage)
         this.markers.push(marker);
-
         
       }
       
+    },
+    makeClickListner(storeId){
+      return () => {
+          this.$router.push("/storeDetail?storeId="+storeId)
+        }
+      
+    },
+    makeOverListener(map, marker, infowindow) {
+      return function() {
+          infowindow.open(map, marker);
+        }
+    },
+    makeOutListener(infowindow) {
+      return function() {
+          infowindow.close();
+        }
     },
     addCircle(curLat,curLng){
       this.circle = new kakao.maps.Circle({
@@ -311,5 +333,14 @@ export default {
   }
 </script>
 
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
+.Container {
+  background: #dfebff;
+  border-radius: 30px;
+}
 </style>

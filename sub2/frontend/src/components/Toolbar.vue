@@ -6,8 +6,8 @@
       <v-icon>mdi-view-list</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
-    <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain></v-img>
-    <div class="Do fs40" style="display:inline-block">세명맛집</div>
+    <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain @click="goHome" style="cursor:pointer"></v-img>
+    <div class="Do fs40" style="display:inline-block; cursor:pointer" @click="goHome">세명맛집</div>
     <v-spacer></v-spacer>
     <loginDialog v-if="$cookie.get('token') == null"></loginDialog>
     <v-btn v-if="$cookie.get('token') != null" to="/myPage" class="mx-1 cabin" rounded text >myPage</v-btn>
@@ -42,6 +42,9 @@ export default {
   }),
   computed: {
     ...mapState("data", ["count","token"]),
+    token : () => {
+      return this.$cookie.get('token')
+    }
   },
   mounted() {
     this.onResponsiveInverted();
@@ -122,12 +125,7 @@ export default {
       else 
         return true
     },   
-    test(){
-      // this.$cookie.set('token', '어쩌라고' , { expires: '60s' });
-      console.log(this.$cookie.get('csrftoken'))
-      // window.location.reload();
-      // this.$cookie.delete('token')
-    },
+    
     test2(){
       let form = new FormData()
       form.append('username', 'taemin010')
@@ -180,8 +178,6 @@ export default {
       http
         .post('/auth/token/',form)
         .then(response => {
-          console.log(response)
-          console.log(response.data)
           this.$cookie.set('token', response.data.token , { expires: '30m' });
           window.location.reload()
         })
@@ -201,22 +197,9 @@ export default {
     logout(){
       this.$cookie.delete('token')
       window.location.reload()
-      // let config = {
-      //   headers : {
-      //     'access-token' : this.$cookie.get('token'),
-      //     'withCredentials':true
-      //     }
-      // }
-      // session
-      //   .post('/rest-auth/logout/', config)
-      //   .then(response => {
-      //     console.log(response.data)
-      //     this.$cookie.delete('token')
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
-
+    },
+    goHome(){
+      this.$router.push("/")
     }
   }
 };
