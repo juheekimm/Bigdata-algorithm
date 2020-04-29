@@ -1,5 +1,5 @@
 <template>
-  <v-container v-scroll="onScroll" style="background:white">
+  <v-container v-scroll="onScroll" class="Container">
     <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
       <v-flex md10 xs12>
@@ -470,5 +470,15 @@ input {
 }
 .list-item {
   display: inline-block;
+}
+
+.Container{
+  background: white;
+  border-top-style: solid;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-color: #77ddcf;
+  border-radius: 20px 20px 0px 0px;
+  border-width: 5px;
 }
 </style>

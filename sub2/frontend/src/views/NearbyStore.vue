@@ -1,9 +1,8 @@
 <template>
-  <v-container fill-height>
-    
+  <v-container fill-height class="Container">
     <v-layout wrap mt-5 class="mx-3" >
       <v-flex sm9>
-        <div id="map" style="width:100%;height:100%;"></div>
+        <div id="map" style="width:100%;height:95%;"></div>
       </v-flex>
       <v-flex sm3>
         <v-card class="mx-3">
@@ -28,7 +27,7 @@
             
             <v-container fill-height class="px-0">
               <v-list
-                style="min-height: 400px; max-height: 400px; width:100%"
+                style="min-height: 380px; max-height: 380px; width:100%"
                 class="overflow-y-auto"
               >
                 <v-list-item 
@@ -339,5 +338,9 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
 .Do {
   font-family: 'Do Hyeon', sans-serif;
+}
+.Container {
+  background: #dfebff;
+  border-radius: 30px;
 }
 </style>
