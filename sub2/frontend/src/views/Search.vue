@@ -1,8 +1,14 @@
 <template>
-  <v-container v-scroll="onScroll" class="Container">
+  <v-container v-scroll="onScroll" class="Container pt-4">
     <!--auto Complete-->
     <v-layout justify-center wrap mt-5>
-      <v-flex md10 xs12>
+      <v-flex sm2 md3 xs12>
+        <div style="text-align: center;">
+          <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain style="cursor:pointer; display: inline-block;" ></v-img>
+          <p class="Do fs40" style="display:inline-block; cursor:pointer">세명맛집</p>
+        </div>
+      </v-flex>
+      <v-flex sm10 md9 xs12>
         <autocomplete
           :search="search"
           placeholder="음식점을 찾아보세요"
@@ -82,6 +88,8 @@
         </autocomplete>
       </v-flex>
     </v-layout>
+
+    <v-divider></v-divider>
 
     <!-- storeList + map -->
     <v-layout wrap mt-5>
@@ -424,6 +432,16 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
+.fs50 {
+  font-size: 50px;
+}
+.fs40 {
+  font-size: 50px;
+}
 .autocomplete-input-no-results.autocomplete-input-focused {
   border: 3px solid green;
   /* border-bottom-color: transparent;
@@ -474,11 +492,12 @@ input {
 
 .Container{
   background: white;
-  border-top-style: solid;
+   
+  /* border-top-style: solid;
   border-left-style: solid;
   border-right-style: solid;
   border-color: #77ddcf;
   border-radius: 20px 20px 0px 0px;
-  border-width: 5px;
+  border-width: 5px; */
 }
 </style>
