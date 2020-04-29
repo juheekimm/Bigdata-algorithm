@@ -433,7 +433,7 @@ def conn_create():
         drivername="mysql",
         username="root",
         password="ssafy",
-        host="52.79.223.182",
+        host="52.78.173.64",
         port="3306",
         database="django_test",
         query = {'charset': 'utf8mb4'}
@@ -506,6 +506,15 @@ class matrixFactorization(APIView):
         keys = req.keys()
         if ('store_id' in keys):
             store_id = req['store_id']
+            
+            #리뷰 개수 체크
+            reviewlist = Review.objects.all().filter(store_id=store_id)
+            reviewlist_string = serialize('json', reviewlist)
+            reviewlist_json = json.loads(reviewlist_string)
+
+            # 리뷰가 없는 경우, mf 알고리즘을 사용할 수 없으므로 빈 리스트를 반환해준다
+            if len(reviewlist_json) == 0 :
+                return Response([])
            
             queryset = Store.objects.all().filter(id=store_id)
             queryset_string = serialize('json', queryset)
