@@ -23,4 +23,9 @@ export default [{
         view: "MyPage",
         name: "MyPage"
     },
+    {
+        path: "/aboutus",
+        view: "AboutUs",
+        name: "AboutUs"
+    },
 ];

@@ -56,9 +56,14 @@ export default {
         text: "맛집 검색"
       },
       {
-        to: "nearbyStore",
+        to: "/nearbyStore",
         icon: "mdi-map",
         text: "근처 음식점"
+      },
+      {
+        to: "/aboutus",
+        icon: "mdi-human-greeting",
+        text: "AboutUs"
       },
       
     ]
