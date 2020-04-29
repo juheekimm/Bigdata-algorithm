@@ -23,7 +23,7 @@ urlpatterns = [
     url('UserReviewbyToken',views.UserReviewbyToken),
 
     # add juheekim
-    url('storeIdbyUserInfo',views.storeRecobyUserInfo.as_view(),name="storeRecobyUserInfo"),
+    url('storeRecobytToken',views.storeRecobytToken),
     url('matrixFactorization',views.matrixFactorization.as_view(),name="matrixFactorization"),
 
     path('recommendedByMenu/<int:store_id>_<int:dis>',views.recommendedByMenu.as_view(),name="recommendedByMenu"),

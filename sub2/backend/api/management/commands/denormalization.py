@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
 
     def _initialize(self):
-        # models.Store_menu.objects.all().delete()
+        models.Store_menu.objects.all().delete()
 
         query_store="SELECT * FROM django_test.api_store where id="
         # query_menu="SELECT * FROM django_test.api_menu where id between 1 and 50000"
@@ -29,13 +29,14 @@ class Command(BaseCommand):
         # query_menu="SELECT * FROM django_test.api_menu where id between 1200001 and 1500000"
 
         query_menu="SELECT * FROM django_test.api_menu where id between 1500001 and 1651857"
+        query_menu="SELECT * FROM django_test.api_menu"
 
 
         engine = create_engine(URL(
             drivername="mysql",
             username="root",
             password="ssafy",
-            host="52.79.223.182",
+            host="52.78.173.64",
             port="3306",
             database="django_test",
             query = {'charset': 'utf8mb4'}
@@ -61,6 +62,8 @@ class Command(BaseCommand):
 
         temp=""
         for menu in menus.itertuples():
+            if (menu.id % 100000) ==0:
+                print("10만개 완료")
             now_store_id = menu.store_id
             if tmp_store_id != now_store_id: # 저장시작
                 Store_menus_bulk.append(

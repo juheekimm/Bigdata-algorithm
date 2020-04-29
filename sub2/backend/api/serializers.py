@@ -30,9 +30,17 @@ class StoreNameSerializer(serializers.ModelSerializer):
             "store_name",
         ]
 
+class ReviewStoreSerializer(serializers.ModelSerializer):
+    store = StoreSerializer(read_only=True)
+    class Meta:
+        model = Review
+        # fidels = ("reviewId","userId","storeId","contents")
+        fields = '__all__'
+
+
 # 이렇게 해야 되는 건데 왜...
 class ReviewUserSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Review
         # fidels = ("reviewId","userId","storeId","contents")

@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',#login auth
+    'sslserver'
 ]
 
 MIDDLEWARE = [
@@ -130,7 +131,7 @@ DATABASES = {
         'NAME': 'django_test',
         'USER': 'root',
         'PASSWORD': 'ssafy',
-        'HOST': '52.79.223.182',
+        'HOST': '52.78.173.64',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',

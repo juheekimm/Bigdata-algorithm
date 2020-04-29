@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def _initialize(self):
         # output=self.recommendation_category_region("참닭발","죽전")
         print(self.query_MySqlDB("SELECT * FROM django_test.api_store_menu;"))
-        output=self.recommendation_category_menu_distance(371163,2)
+        output=self.recommendation_category_menu_distance(371163,1)
         print("--------------------------추천해줄 다른 음식점-------------------------")
         print(output)
 
@@ -127,7 +127,7 @@ class Command(BaseCommand):
             drivername="mysql",
             username="root",
             password="ssafy",
-            host="52.79.223.182",
+            host="52.78.173.64",
             port="3306",
             database="django_test",
             query = {'charset': 'utf8mb4'}
