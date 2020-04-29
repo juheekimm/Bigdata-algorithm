@@ -234,7 +234,7 @@
 
       <!--review title-->
       <v-flex sm12 id ="reviewTitle">
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
+        <p class="ma-0 font-weight-light Do" style="font-size: 1.8em;">
           Reveiw ({{ reviews.length }}건) 
           <v-btn text @click="reviewDialog = true"><v-icon color="blue">mdi-pencil</v-icon><b>리뷰작성</b></v-btn>
         </p>

@@ -7,7 +7,7 @@
           <p class="Do fs50" v-animate="{value: 'bounceInDown',delay: 300}">
             <span style="color : red">세</span>상 유<span style="color : red">명</span>한 <span style="color : red">맛집</span> 모두다!
           </p>
-          <p class="Noto fs40" v-animate="{value: 'bounceInDown',delay: 400}">★우리 세명이 이걸 만들었습니다★</p>
+          <p class="Noto fs40" v-animate="{value: 'bounceInDown',delay: 400}">★우리 세명이 만들었습니다★</p>
           <p class="animated infinite bounce" style="padding-top:200px"><v-icon color="white">mdi-arrow-down</v-icon>scroll</p>
         </div>
 

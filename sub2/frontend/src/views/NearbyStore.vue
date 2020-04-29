@@ -6,10 +6,10 @@
       </v-flex>
       <v-flex sm3>
         <v-card class="mx-3">
-          <v-card-title>
+          <v-card-title class="Do">
             주변 음식점 찾기
           </v-card-title>
-          <v-card-text class="pb-0">
+          <v-card-text class="pb-0 Do">
             반경
             <v-divider>
             </v-divider>
@@ -20,7 +20,7 @@
               <v-radio label="400m" value="400"></v-radio>
             </v-radio-group>
           </v-card-text>
-          <v-card-text>
+          <v-card-text class="Do">
             상점 리스트
             <v-divider>
             </v-divider>
@@ -311,5 +311,10 @@ export default {
   }
 </script>
 
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeong&display=swap');
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
 </style>

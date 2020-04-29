@@ -6,8 +6,8 @@
       <v-icon>mdi-view-list</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
-    <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain to='/' style="cursor:pointer"></v-img>
-    <div class="Do fs40" style="display:inline-block; cursor:pointer" to='/'>세명맛집</div>
+    <v-img class="mx-2" src="../assets/logo.png" max-height="40"  max-width="40" contain @click="goHome" style="cursor:pointer"></v-img>
+    <div class="Do fs40" style="display:inline-block; cursor:pointer" @click="goHome">세명맛집</div>
     <v-spacer></v-spacer>
     <loginDialog v-if="$cookie.get('token') == null"></loginDialog>
     <v-btn v-if="$cookie.get('token') != null" to="/myPage" class="mx-1 cabin" rounded text >myPage</v-btn>
@@ -205,6 +205,9 @@ export default {
       this.$cookie.delete('token')
       window.location.reload()
       console.log()
+    },
+    goHome(){
+      this.$router.push("/")
     }
   }
 };

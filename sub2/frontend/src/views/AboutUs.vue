@@ -1,67 +1,48 @@
 <template>
   <v-container class="px-5" fill-height>
-    <v-layout>
-      <v-flex sm4 class="animated flipInY pa-5">
+    <v-layout>      
+      <v-flex md4 xs12 v-for="(member,index) in members" :key="index+'ss'"  class="animated flipInY pa-5">
         <v-sheet
-            color="#FFFFA1"
-            width="100%"
-            height="100%"
-            class="card"
+          :color="member.color"
+          width="100%"
+          height="100%"
+          class="card"
+          >
+          <v-row
+            style="height:50%"
+            align="end"
+            justify="center"
             >
-            <v-row
-              class="fill-height"
-              align="center"
-              justify="center"
-              >
-              <div>
-                <p style="text-align-last: center;" >
-                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
-                </p>
-                <div class="display-1">검색된 결과가 없습니다.</div>
+            <div>
+              <div style="text-align-last: center;"  class="Do fs50">
+                {{member.name}}
               </div>
-            </v-row>
-          </v-sheet>
-      </v-flex>
-      <v-flex sm4 class="animated flipInY pa-5">
-        <v-sheet
-            color="#B2CCFF"
-            width="100%"
-            height="100%"
+              <div class="Do fs50">
+                {{member.position}}
+              </div>
+              <div class="Do fs20" style="text-align-last: center;">
+                {{member.role}}
+              </div>
+              <div style="text-align-last: center;" class="mb-5">
+                {{member.email}}
+              </div>
+            </div>
+          </v-row>
+          <v-row
+            style="height:50%"
+            align="center"
+            justify="center"
             >
-            <v-row
-              class="fill-height"
-              align="center"
-              justify="center"
-              >
-              <div class="animated shake">
-                <p style="text-align-last: center;" >
-                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
-                </p>
-                <div class="display-1">검색된 결과가 없습니다.</div>
+            <div>
+              <div v-for="(work,index) in member.works" :key="index+member.name" style="text-align-last: center;" class="Nanum">
+                {{work}}
               </div>
-            </v-row>
-          </v-sheet>
+            </div>
+          </v-row>
+        </v-sheet>
       </v-flex>
-      <v-flex sm4 class="animated flipInY pa-5">
-        <v-sheet
-            color="#D1B2FF"
-            width="100%"
-            height="100%"
-            >
-            <v-row
-              class="fill-height"
-              align="center"
-              justify="center"
-              >
-              <div class="animated shake">
-                <p style="text-align-last: center;" >
-                  <v-icon style="font-size:100px" color="pink">mdi-account-question</v-icon>
-                </p>
-                <div class="display-1">검색된 결과가 없습니다.</div>
-              </div>
-            </v-row>
-          </v-sheet>
-      </v-flex>
+     
+      
 
     </v-layout>
   </v-container>
@@ -69,21 +50,56 @@
 
 <script>
 export default {
-  created : function(){
-    
-  },
-  data () {
-      return {
-             
-      }
-    },
-  methods : {
-    
-  },
-};
+  data: () => ({
+      members : [
+        {
+          name: "김태민",
+          position: "Front/Back",
+          role : "GIT MASTER",
+          color: "#FFFFA1",
+          email: "taeminkim23@gmail.com",
+          works: [
+            "Vue.js, Django",
+            "자동완성기능",
+            "지도 기반 서비스(Kakao Map)",
+            "JWT, REST",
+            "Design",
+            "AWS"
+          ]
+        },
+        {
+          name : "이재혁",
+          position : "Back/Algorithm",
+          role : "READER",
+          color : "#B2CCFF",
+          email : "jason07999@naver.com",
+          works: [
+            "Django",
+            "음식점 기반 알고리즘(TF-IDF)",
+            "DB모델링",
+            "데이터 가공",
+            "AWS"
+          ]
+        },
+        {
+          name: "김주희",
+          position: "Back/Algorithm",
+          role : "JIRA MASTER",
+          color: "#D1B2FF",
+          email: "yylcd9999@naver.com ",
+          works : [
+            "Django",
+            "유저 기반 알고리즘",
+            "음식점 기반 알고리즘(Matrix Factorization)", 
+            "로그인/회원가입(JWT)"
+          ]
+        },
+      ],
+  })
+}
 </script>
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Serif+KR:wght@300;400;900&family=Song+Myung&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&Do+Hyeon&family=Noto+Serif+KR:wght@300;400;900&family=Song+Myung&display=swap');
 .card{
   border-radius: 30px;
 }
@@ -96,51 +112,16 @@ export default {
 .Do {
   font-family: 'Do Hyeon', sans-serif;
 }
+.Nanum {
+  font-family: 'Nanum Gothic', sans-serif;
+}
 .fs70 {
   font-size: 70px;
 }
 .fs50 {
   font-size: 50px;
 }
-.fs40 {
-  font-size: 40px;
-}
-.image-container{
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-.fullpage-container {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-}
-.page {
-    display: block;
-    text-align: center;
-    color: #eee;
-}
-.page-1 {
-  padding-top: 130px;
-  background: #1bbc9b;
-}
-.page-2 {
-  padding-top: 150px;
-  background: #E8D9FF
-}
-.page-3 {
-  padding-top: 150px;
-  background: #aabbcc;
-}
-.page-4 {
-  padding-top: 150px;
-  background: #FFC19E;
-}
-.page-5 {
-  padding-top: 150px;
-  background: #FFA7A7
+.fs20 {
+  font-size: 20px;
 }
 </style>

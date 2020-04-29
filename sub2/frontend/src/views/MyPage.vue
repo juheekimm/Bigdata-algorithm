@@ -4,7 +4,7 @@
     <v-layout wrap mt-5 class="mx-3" >
       <!--MyInfo title-->
       <v-flex sm12 xs12>
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
+        <p class="ma-0 font-weight-light Do" style="font-size: 1.8em;">
           MyInfo
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
@@ -37,9 +37,9 @@
         </v-simple-table>
       </v-flex>
       <!--Recommand title-->
-      <v-flex sm12 xs12 class="mt-4">
-        <span class="ma-0 font-weight-light" style="font-size: 1.8em;">
-          여긴 어떠세요?
+      <v-flex sm12 xs12 class="mt-4 outerFlex">
+        <span class="ma-0 font-weight-light Do" style="font-size: 1.8em;">
+          <v-icon color='red'>mdi-heart</v-icon>여긴 어떠세요?
         </span>
         <span>
           (<b style="color:orange">{{curYear()-user.age+1}}</b>세의 <b style="color:orange">{{user.gender == "여"?"여성":"남성"}}</b>들이 추천합니다.)
@@ -103,7 +103,7 @@
       </v-flex>
       <!--User Review title-->
       <v-flex sm12 xs12 class="mt-4">
-        <p class="ma-0 font-weight-light" style="font-size: 1.8em;">
+        <p class="ma-0 font-weight-light Do" style="font-size: 1.8em;">
           Review List
         </p>
         <v-divider class="mb-5 mt-1"></v-divider>
@@ -306,7 +306,7 @@ export default {
         )
         .catch((errors) => {
           console.log(errors)
-          alert("마이페이지를 로그인 후 이용가능합니다.")
+          alert("마이페이지는 로그인 후 이용가능합니다.")
           his.loading = false
         })
     },
@@ -333,7 +333,7 @@ export default {
 </script>
 
 <style scoped>
-
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeong&display=swap');
 .v-card--reveal {
   align-items: center;
   bottom: 0;
@@ -342,7 +342,9 @@ export default {
   position: absolute;
   width: 100%;
 }
-
+.Do {
+  font-family: 'Do Hyeon', sans-serif;
+}
 .reviewContent {
   text-align: -webkit-center; 
   border-radius: 10px; 
@@ -382,5 +384,12 @@ export default {
   max-width : 800px
 }
 
+.outerFlex {
+  background: #dffbff;
+  border-radius: 20px;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
 </style>
