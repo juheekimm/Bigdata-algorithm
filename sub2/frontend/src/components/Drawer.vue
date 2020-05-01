@@ -9,8 +9,8 @@
     mobile-break-point="1800"
     width="250"
   >
-    <v-layout column justify-center>
-      <v-img class="ma-5" src="../assets/cloud.jpg">
+    <v-layout column justify-center style="align-items: center;">
+      <v-img width="150" class="ma-5" src="../assets/logo.png">
       </v-img>
     </v-layout>
     <v-divider class="mx-4" />
@@ -56,8 +56,16 @@ export default {
         text: "맛집 검색"
       },
       {
-
-      }
+        to: "/nearbyStore",
+        icon: "mdi-map",
+        text: "근처 음식점"
+      },
+      {
+        to: "/aboutus",
+        icon: "mdi-human-greeting",
+        text: "AboutUs"
+      },
+      
     ]
   }),
   computed: {
