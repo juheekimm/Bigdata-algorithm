@@ -52,66 +52,79 @@ class AllStoreList(APIView):
         return Response(serializer.data)
 
 class SearchStore(APIView):
-
-    # def get_query(self,condition,keyword):
-    #     try :
-    #         if(condition == 'storeId'):
-    #             return Store.objects.all().filter(id=keyword)
-    #         elif(condition == 'storeName'):
-
-    #             return Store.objects.all().filter(store_name__contains=keyword)
-    #         elif(condition == 'storeAddress'):
-    #             return Store.objects.all().filter(address__contains=keyword)
-    #         else:
-    #             raise Http404
-    #     except :
-    #         raise Http404
  
     def post(self, request):
-        condition = request.POST['condition']
+        # condition = request.POST['condition']
         keyword = request.POST['keyword']
-        count = int(request.POST['count'])
-        size = int(request.POST['size'])
+        count = request.POST['count']
+        size = request.POST['size']
 
-        storeQueryset = Store.objects.all().filter(store_name__contains=keyword)
-        storeQueryset = storeQueryset[(count*size):(count*size)+size]
+        # queryset = query_MySqlDB("SELECT s.id, s.store_name, s.branch, s.area, s.tel, s.address, s.latitude, s.longitude, s.category, AVG(r.total_score) as total_score "
+        # + "FROM api_store s LEFT JOIN api_review r  on s.id = r.store_id "
+        # + "where store_name like concat('%','" + keyword +"','%')"
+        # + "GROUP BY s.id "
+        # + "order by total_score desc "
+        # + "limit "+count+","+size+";")
+
+        queryset = query_MySqlDB("SELECT s.id, s.store_name, s.branch, s.area, s.tel, s.address, s.latitude, s.longitude, s.category, AVG(r.total_score) as total_score "
+        + " FROM api_store s LEFT JOIN api_review r  on s.id = r.store_id "
+        + " WHERE store_name LIKE '%%" + keyword +"%%'"
+        + " GROUP BY s.id "
+        + " ORDER BY total_score desc"
+        + " limit "+str(int(count)*int(size))+","+size+";")
+
+
+        print(queryset)
+
         
-        stores = list(storeQueryset)
         jsonObject = []
-        idx = 0
-
-        for ttt in stores:            
+        for row in queryset:
             obj = {}
-            obj["id"] = ttt.id
-            obj["store_name"] = ttt.store_name
-            obj["branch"] = ttt.branch
-            obj["area"] = ttt.area
-            obj["tel"] = ttt.tel
-            obj["address"] = ttt.address
-            obj["latitude"] = ttt.latitude
-            obj["longitude"] = ttt.longitude
-            obj["category"] = ttt.category.split('|')
+            for column, value in row.items():
+                # print(column+" "+str(type(value)))
+                if(column == "total_score" ):
+                    if(value is None):
+                        obj[column] = 0
+                    else:
+                        obj[column] = int(value)
+                else:
+                    obj[column] = value
+               
 
-            ReviewQueryset = Review.objects.filter(store_id=ttt.id).values("store").annotate(total_score=Avg("total_score"))
-            review_list = list(ReviewQueryset)
-            obj["total_score"] =  0 if len(review_list) == 0 else review_list[0]["total_score"]
             jsonObject.append(obj)
-
+            
         data = type(json.dumps(jsonObject))
         
         return JsonResponse({"storeList" :jsonObject}, json_dumps_params = {'ensure_ascii': True})
-        # return Response({"serializer":"d"})
+        # serializer = StoreSerializer(queryset, many = True)
 
-        # if 'condition' in request.POST.keys() and 'keyword' in request.POST.keys() and 'count' in request.POST.keys() and 'size' in request.POST.keys():
-        #     condition = request.POST['condition']
-        #     keyword = request.POST['keyword']
-        #     count = int(request.POST['count'])
-        #     size = int(request.POST['size'])
-        #     queryset = self.get_query(condition,keyword)[(count*size):(count*size)+size]
-        # else :
-        #     queryset = Store.objects.all()[:10]
-        # serializer = StoreSerializer(queryset, many=True)
-        # return Response(serializer.data)
+        # storeQueryset = Store.objects.all().filter(store_name__contains=keyword)
+        # storeQueryset = storeQueryset[(count*size):(count*size)+size]
+        
+        # stores = list(storeQueryset)
+        # jsonObject = []
+        # idx = 0
+
+        # for ttt in stores:            
+        #     obj = {}
+        #     obj["id"] = ttt.id
+        #     obj["store_name"] = ttt.store_name
+        #     obj["branch"] = ttt.branch
+        #     obj["area"] = ttt.area
+        #     obj["tel"] = ttt.tel
+        #     obj["address"] = ttt.address
+        #     obj["latitude"] = ttt.latitude
+        #     obj["longitude"] = ttt.longitude
+        #     obj["category"] = ttt.category.split('|')
+
+        #     ReviewQueryset = Review.objects.filter(store_id=ttt.id).values("store").annotate(total_score=Avg("total_score"))
+        #     review_list = list(ReviewQueryset)
+        #     obj["total_score"] =  0 if len(review_list) == 0 else review_list[0]["total_score"]
+        #     jsonObject.append(obj)
+
+        
+        # return Response({"state" : "state"})
+    
 
 # autoComplete를 위한 REST
 class SearchStroeforComplete(APIView):
