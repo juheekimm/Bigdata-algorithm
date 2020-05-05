@@ -40,7 +40,7 @@
 
 
 ## 역할
-- 김주희 : 로그인/회원가입, knn 알고리즘, jira 담당
+- 김주희 : 로그인/회원가입, Matrix Factorization 알고리즘, 사용자 정보 기반 추천 알고리즘, jira 담당
 - 이재혁 : db설계 및 Matrix Factorization 알고리즘, 팀장
 - 김태민 : rest 설계 및 front 담당, git 담당
 
