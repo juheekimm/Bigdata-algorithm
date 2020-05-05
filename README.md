@@ -45,9 +45,9 @@ Matrix Factorization 알고리즘이 자주 쓰이는 이유는
 
 <img src="img/func2.png" width="90%" style="margin-top: 3%;">
 
-<img src="img/fucn3.png" width="90%" style="margin-top: 3%;">
+<img src="img/func3.png" width="90%" style="margin-top: 3%;">
 
-<img src="img/fucn4.png" width="90%" style="margin-top: 3%;">
+<img src="img/func4.png" width="90%" style="margin-top: 3%;">
 
 <img src="img/db.png" width="90%" style="margin-top: 3%;">
 
