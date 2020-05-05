@@ -1,20 +1,65 @@
-# 프로젝트 컨셉 및 기능 소개
+# 세명맛집 : 빅데이터 알고리즘을 활용한 맛집 추천 서비스
 
->  2기 서울 1반 A106조 (이재혁, 김태민, 김주희)
+## '세상 유명한 맛집을 모두 모았다' 라는 의미
 
-## 컨셉
+<img src="img/plan1.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/plan2.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/plan3.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/arch1.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/arch2.png" width="90%" style="margin-top: 3%;">
+
+Front는 `Vue`로 구성했고 백엔드는 `Django Framework`를 사용하여 RESTful하게 구현했습니다.
+
+Front에서는 `KAKAO MAP API`를 이용해 지도 정보를 가져왔고
+
+`vue-autocomplete`를 이용해 검색시 자동완성을 구현했습니다.
+
+
+Back에서는 `Pandas`를 이용해 데이터를 가공 및 분석했고
+
+사용자 인증에는 `jwt 토큰`을 사용했습니다.
+
+<img src="img/service.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/bigdata.png" width="90%" style="margin-top: 3%;">
+
+## TF-IDF 알고리즘
+
+데이터 분석 시 많이 등장하는 단어에 무조건 가산점을 준다면, 유의미한 결과를 얻기 힘들 때가 많습니다.
+
+TF-IDF는 이를 보완한 알고리즘으로서 단순히 많이 등장한다고 해서 그 단어의 가치를 정하는 것이 아니라,
+
+많이 등장하는 단어에는 일종의 패널티를 줌으로서 단어 빈도의 스케일을 맞춰주는 기법입니다.
+
+## Matrix Factorization 알고리즘
+
+Matrix Factorization 알고리즘이 자주 쓰이는 이유는
+
+행렬 분해를 이용하여 잠재 요인을 끌어냈을 때 저장 공간을 절약할 수 있기 때문입니다.
+
+<img src="img/func1.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/func2.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/fucn3.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/fucn4.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/db.png" width="90%" style="margin-top: 3%;">
+
+<img src="img/team.png" width="90%" style="margin-top: 3%;">
+
+<!-- ## 컨셉
 
 음식점 검색 뿐 아니라
 
-내 위치, 검색 기록, 즐겨찾기 등엑 기반하여 추천 알고리즘을 통해 추천 음식점 목록까지 볼 수 있는 사이트
-
-
+내 위치, 내 리뷰 등에 기반한 추천 알고리즘을 통해 추천 음식점 목록까지 볼 수 있는 사이트
 
 ## 기능
-
-### 메인 페이지
-
-- 사이트 소개 및 간단한 이용 방법 표시
 
 ### 주변 음식점 정보
 
@@ -48,4 +93,4 @@
 - back : django, python 라이브러리
 - front : vue
 - db : mysql
-- 형상관리 : git, jira
+- 형상관리 : git, jira -->
