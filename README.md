@@ -51,7 +51,10 @@ Matrix Factorization 알고리즘이 자주 쓰이는 이유는
 
 <img src="img/db.png" width="90%" style="margin-top: 3%;">
 
-<img src="img/team.png" width="90%" style="margin-top: 3%;">
+<!-- <img src="img/team.png" width="90%" style="margin-top: 3%;"> -->
+
+## 역할
+- 김주희 : rest api 구현, 로그인/회원가입, Matrix Factorization 알고리즘, 사용자 정보 기반 추천 알고리즘
 
 <!-- ## 컨셉
 
